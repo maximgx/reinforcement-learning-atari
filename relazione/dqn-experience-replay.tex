@@ -123,9 +123,20 @@
 	\subsection{Sotto la soglia umana}
 		Introdurre il problema dei giochi che non raggiungono prestazioni umane. (postare results)
 
-\section{Reti Neurali}\label{}
-	Introdurre e descriere le reti convoluzionali, e non solo.
-	
+\section{Reti Neurali Convoluzionali}\label{}
+Le reti neurali convoluzionali (CNN) sono di fatto delle reti neurali artificiali ma differiscono in alcuni aspetti; sono costituite da neuroni collegati tra loro tramite rami pesati, infatti i parametri allenabili anche per questa tipologia di rete sono: weight e bias. Quanto risaputo sull'allenamento di una rete neurale, cioè forward/backward propagation e aggiornamento dei weight, vale anche in questo contesto; inoltre un'intera rete neurale convoluzionale utilizza sempre una singola funzione di costo differenziabile.
+Quindi la risposta alla domanda "che cosa differisce da una comune rete neurale?" è che un'architettura ConvNet fa una specifica assunzione che in input ci sia un'immagine e ciò permette ad essa di assumere delle specifiche proprietà al fine di elaborare al meglio tali dati. Ad esempio di poter effettuare delle for-ward propagation più efficienti in modo da ridurre l'ammontare di parametri della rete.
+\subsection{Architettura}
+Le normali reti neurali stratificate con un'architettura fully connected, dove ogni neurone di ciascun layer è collegato a tutti i neuroni del layer precedente (neuroni bias esclusi), in generale non scalano bene con l'aumentare delle dimensioni delle immagini.
+%La differenza principale sta nei layer di quelle convoluzionali, poichè hanno i neuroni organizzati in tre dimensioni: larghezza, altezza e profondità.
+Le reti neuronali convoluzionali prendono vantaggio dal fatto che l'input consiste in immagini e quindi vincolano l'architettura in modo più sensibile. In particolare, a differenza di una normale rete neurale, gli strati di un ConvNet hanno neuroni disposti in tre dimensioni: larghezza, altezza e profondità. 
+Inoltre, i neuroni di un layer sono connessi solo ad una piccola regione del layer precedente, invece che a tutti i neuroni come in un'architettura fully connected. Questa è la principale caratteristica che contraddistingue una CNN da una normale rete neurale stratificata con un'architettura fully connected. In figura \ref{fig:cnn} si può vedere come vengono disposti i neuroni all'interno di una CNN, infatti  ogni layer trasforma l'input 3D in output 3D con le attivazione dei neuroni. 
+	\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=.5]{images/cnn.jpeg}
+	\caption{ConvNet}
+	\label{fig:cnn}
+\end{figure*}
 \section{Perchè non funziona}\label{}
 	\subsection{Il sospetto}
 		A livello intuitivo

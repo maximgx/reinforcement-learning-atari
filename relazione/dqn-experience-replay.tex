@@ -1,5 +1,6 @@
 \documentclass[twoside,twocolumn,10pt]{extarticle}
 
+\usepackage{amssymb}
 \usepackage{multirow}
 \usepackage{textcase}
 \usepackage{amsthm}
@@ -110,19 +111,53 @@
 \tableofcontents
 
 \section*{Introduzione}
-	\lettrine[nindent = 0.4em,lines=3]{N}\space\MakeTextLowercase{e}ll'ambito del \textit{Machine Learning} si possono individuare tre diversi stili nella risoluzione dei problemi. L'apprendimento \textit{supervisionato} prevede che a un modello vengano forniti esempi di input e relativi output, affinché esso individui delle regole in grado di mappare input futuri nella maniera più corretta possibile. Esistono diverse metriche in grado di individuare le prestazioni di un modello. L'apprendimento \textit{non supervisionato} invece, ammette che al modello vengano forniti dati non etichettati. Il suo compito sarà poi quello di individuare autonomamente dei pattern o delle features. Il tipo di apprendimento che viene preso in considerazione in questo progetto è l'apprendimento \textit{per rinforzo} (\textit{Reinforcement Learning, RL}). Si può dire che gli algoritmi RL interagiscono con ambienti dinamici in cui ci sono degli obiettivi da raggiungere, per poi ricevere un feedback sotto forma di \textit{premio} o \textit{punizione}. In altre parole, ci sono degli input e degli output etichettati come nell'apprendimento supervisionato, ma le etichette dei dati in output cambiano per adattarsi meglio all'ambiente.
+	\lettrine[nindent = 0.4em,lines=3]{N}\space\MakeTextLowercase{e}ll'ambito del \textit{Machine Learning} si possono individuare diversi stili nella risoluzione dei problemi. L'apprendimento \textit{supervisionato} prevede che a un modello vengano forniti esempi di input e relativi output, affinché esso individui delle regole in grado di mappare input futuri nella maniera più corretta possibile. Esistono diverse metriche in grado di individuare le prestazioni di un modello. L'apprendimento \textit{non supervisionato} invece, ammette che al modello vengano forniti dati non etichettati. Il suo compito sarà poi quello di individuare autonomamente dei pattern o delle features. Il tipo di apprendimento che viene preso in considerazione in questo progetto è l'apprendimento \textit{per rinforzo} (\textit{Reinforcement Learning, RL}). Si può dire che gli algoritmi RL interagiscono con ambienti dinamici in cui ci sono degli obiettivi da raggiungere, per poi ricevere un feedback sotto forma di \textit{premio} o \textit{punizione}. In altre parole, ci sono degli input e degli output etichettati come nell'apprendimento supervisionato, ma le etichette dei dati in output cambiano per adattarsi meglio all'ambiente.
 	
 	Una tecnica per affrontare i problemi RL è l'algoritmo \texttt{Q\texttwelveudash Learning} che, preso singolarmente, in alcuni casi presenta imperfezioni e persino comportamenti divergenti. È stato formalizzato e implementato dalla \textit{start-up} DeepMind un agente in grado di imparare a giocare all'intero parco titoli di Atari 2600, tramite reti neurali deep che approssimano l'algoritmo \textit{Q\texttwelveudash Learning}. Quest'ultimo però, per risolvere i problema legati alla sua stabilità, è stato modificato inserendo il concetto di \textbf{Experience Replay} e altre modifiche che verranno citate più tardi. È necessario capire la motivazione fondamentale dietro a questi sforzi, cioè quella di creare un singolo algoritmo in grado di affrontare un'ampia varietà di problemi, che a sua volta è da sempre un obiettivo dell'Ingelligenza Artificiale Generale. Un unico modello che affronta un intero parco giochi è un ottimo allenamento: per la maggior parte dei giochi Atari 2600 sono stati ottenuti risultati brillanti. Esiste tuttavia un insieme di giochi in cui l'agente \textit{Deep Q\texttwelveudash Network} (DQN) non supera le prestazioni umane o non migliora le metriche ottenuti da metodi precedentemente usati. In questo progetto si prenderà uno dei giochi in cui l'agente DQN non si dimostra particolarmente bravo e si cercherà di capire perché.
 	
 	La relazione è strutturata in questo modo:
 	\begin{itemize}
-		\item to be continued...
+		\item nella prima sezione verrà descritto l'algoritmo Q\texttwelveudash Learning e le aggiunte fatte dall'agente Deep Q\texttwelveudash Network;
+		\item la seconda sezione descriverà l'architettura delle reti neurali sottostante all'agente DQN;
+		\item DISCORSO SINCRONIA ASINCRONIA
 	\end{itemize}
 	
-\section{Agente Deep Q\texttwelveudash Network}\label{sec:dqn-agent}
+\section{Agente DQN}\label{sec:dqn-agent}
+	In questa sezione verrà descritto in breve l'algoritmo \textit{Q\texttwelveudash Learning} (QL), e in che modo l'agente DQN ne riprende il concetto e come quest'ultimo sia stato definito.
+
 	\subsection{Algoritmo Q\texttwelveudash Learning}
+		L'algoritmo si basa su una funzione di questo tipo:
+		\begin{center}
+			$Q: S\times A \longrightarrow \mathbb{R}$,
+		\end{center}
+		dove $S$ è l'insieme degli stati che può assumere l'ambiente dinamico e $A$ sono le possibili azioni da eseguire. Dopo aver eseguito un'azione $a \in A$ l'agente si muove verso il prossimo stato ricevendo una ricompensa. Tuttavia, l'algoritmo deve imparare quale azione $a$ sia \textit{ottimale} per ogni stato, perché il suo obiettivo ultimo è quello di massimizzare la quantità totale di ricompense ricevute. Per azione ottimale si intende quella che a lungo termine ha la ricompensa più alta. Il QL è un algoritmo iterativo, sono quindi necessarie delle condizioni iniziali. L'appredimento parte ritornando un valore predefinito, e ogni volta che agisce osserva un nuovo stato insieme alla ricompensa che possono dipendere dallo stato precedente e dall'azione selezionata, aggiornando il valore di $Q$.
+		\begin{figure*}[ht]
+			\begin{equation}\label{eq:q-learning}
+				Q(s_t, a_t) := Q(s_t, a_t) + \alpha_t \cdot (r_{t + 1} + \gamma \cdot \max_a Q(s_{t + 1}, a) - Q(s_t, a_t))
+			\end{equation}
+		\end{figure*}
+		L'equazione \ref{eq:q-learning} descrive l'algoritmo QL.
+		
+		\paragraph*{Learning rate $\alpha_t$} O anche \textit{tasso di apprendimento}, viene usato per regolare quanto un nuovo aggiornamento incide su quello che è già stato appreso, e si ha che $0 \leq \alpha_t \leq 1$. Infatti il valore $0$ è un estremo che indica che l'algoritmo non memorizzerà nulla, mentre il valore $1$ specifica che bisogna memorizzare solo le informazioni più recenti.
+		
+		\paragraph*{Discount factor $\gamma$} Oppure \textit{fattore di sconto}, che aiuta a determinare l'importanza delle ricompense ricevute. Analogamente a prima si ha che $0 \leq \gamma \leq 1$, dove lo zero imposta l'attenzione dell'algoritmo sulle ricompense immediate, mentre il valore $1$ induce a scelte in funzione di ricompense migliori a lungo termine.
+		
+		\paragraph*{Ricompensa $r_{t + 1}$}	Infine, $r_{t + 1}$ indica la ricompensa stessa dopo aver eseguito $a$ dentro a $s_t$. La ricompensa è una sommatoria pesata dei valori attesi di ricompense ottenibili dagli \textbf{step} futuri a partire dallo stato corrente, e per i futuri $\Delta t$ step i pesi sono calcolati da $\gamma^{\Delta t}$.
+		
+		È detto \textbf{episodio} dell'algoritmo la sequenza di stati che termina con uno stato finale. In un videogioco l'episodio si può vedere come il tentativo di raggiungere un obbiettivo, o completare un livello, che può finire con fallimento e successo. Solitamente è necessario un ampio numero di episodi prima che l'agente sia in grado di fare qualcosa di accettabile. Le implementazioni dell'algoritmo QL sono varie, ma la forma più semplice si basa su una tabella in cui le righe possono essere gli stati e le colonne le azioni. Ogni cella $Q_{i, j}$ contiene il valore di quanto sia ottimale l'azione $a_j$ nello stato $s_i$, e tale valore viene aggiornato opportunamente. Tuttavia, è un metodo non applicabile ad ambienti complessi in cui il numero degli stati è enorme. Un'altro modo è quello di approssimare la funzione tramite Reti Neurali Deep, ed è questa la strada che imbocca l'agente DQN che verrà visto fra poco.
+		
+		\paragraph{Limiti di Q\texttwelveudash Learning} Anche se l'algoritmo QL appena accennato è stato prima introdotto e ne è stata poi dimostrata la convergenza, esso è conosciuto per il suo comportamento potenzialmente divergente se la funzione Q viene rappresentata da un approssimatore non lineare come le reti neurali. Come riportato in \cite{bib:dqn}, uno dei problemi che portano instabilità è che piccoli cambiamenti a Q possono cambiare significativamente la distribuzione dei dati.
 	
-	\subsection{Approssimazione di Q\texttwelveudash Learning}
+	\subsection{Deep Q\texttwelveudash Network}
+		L'agente \textit{Deep Q\texttwelveudash Network} (DQN) ha come base l'algoritmo QL precedentemente descritto, ma si può dire che lo arricchisce con tre elementi fondamentali:
+		\begin{enumerate}
+			\item \textit{Convolutional Neural Network} (CNN);
+			\item \textit{Experience Replay}, un meccanismo che permette di allenare la CNN usando ricordi tratti da esperienze passate;
+			\item un nuovo metodo di aggiornamento dei valori di Q, usando una seconda rete neurale deep.
+		\end{enumerate}
+	
+	
+		Gli autori dietro all'agente DQN hanno anche dimostrato che togliendo anche uno solo di questi 3 elementi i risultati peggiorano drasticamente.
 
 	Qui (e in introduzione) descrivere Lavoro di Deep Mind.
 	\theoremstyle{plain}
@@ -175,7 +210,10 @@ Una CNN è strutturata da tre principali layers: \textbf{Convolutional Layer}, \
 	\subsection{Gioco fallimento}
 		
 \section{Agenti Alternativi}\label{}
-	Spiegare l'evoluzione dell'argomento.
+	Spiegare l'evoluzione dell'argomento. (non è tutto qui, preferiremmo completare il quadro con.....)
+	
+	===
+	Unlike policy gradient methods, which attempt to learn functions which directly map an observation to an action, Q-Learning attempts to learn the value of being in a given state, and taking a specific action there.
 
 	\begin{figure*}[h]
 		\centering

@@ -133,7 +133,17 @@
 		dove $S$ è l'insieme degli stati che può assumere l'ambiente dinamico e $A$ sono le possibili azioni da eseguire. Dopo aver eseguito un'azione $a \in A$ l'agente si muove verso il prossimo stato ricevendo una ricompensa. Tuttavia, l'algoritmo deve imparare quale azione $a$ sia \textit{ottimale} per ogni stato, perché il suo obiettivo ultimo è quello di massimizzare la quantità totale di ricompense ricevute. Per azione ottimale si intende quella che a lungo termine ha la ricompensa più alta. Il QL è un algoritmo iterativo, sono quindi necessarie delle condizioni iniziali. L'appredimento parte ritornando un valore predefinito, e ogni volta che agisce osserva un nuovo stato insieme alla ricompensa che possono dipendere dallo stato precedente e dall'azione selezionata, aggiornando il valore di $Q$.
 		\begin{figure*}[ht]
 			\begin{equation}\label{eq:q-learning}
-				Q(s_t, a_t) := Q(s_t, a_t) + \alpha_t \cdot (r_{t + 1} + \gamma \cdot \max_a Q(s_{t + 1}, a) - Q(s_t, a_t))
+			Q(s_t, a_t) := Q(s_t, a_t) + \alpha_t \cdot (r_{t + 1} + \gamma \cdot \max_a Q(s_{t + 1}, a) - Q(s_t, a_t))
+			\end{equation}
+			%\begin{equation}\label{eq:dqn-learning}
+			%Q^*(s, a) = \max_\pi \mathbb{E} [r_t + \gamma r_{t + 1} + \gamma^2 r_{t %+ 2} + ... | s_t = s, a_t = a, \pi]
+			%\end{equation}
+			\begin{equation}\label{eq:reward}
+				R_t = \sum_{t' = t}^{T} \gamma^{t' - t} r_{t'}
+				% dove $T$ è il tempo di termine del gioco.
+			\end{equation}
+			\begin{equation}\label{eq:dqn-learning}
+			Q^*(s, a) = \max_\pi \mathbb{E} [R_t | s_t = s, a_t = a, \pi]
 			\end{equation}
 		\end{figure*}
 		L'equazione \ref{eq:q-learning} descrive l'algoritmo QL.
@@ -146,27 +156,52 @@
 		
 		È detto \textbf{episodio} dell'algoritmo la sequenza di stati che termina con uno stato finale. In un videogioco l'episodio si può vedere come il tentativo di raggiungere un obbiettivo, o completare un livello, che può finire con fallimento e successo. Solitamente è necessario un ampio numero di episodi prima che l'agente sia in grado di fare qualcosa di accettabile. Le implementazioni dell'algoritmo QL sono varie, ma la forma più semplice si basa su una tabella in cui le righe possono essere gli stati e le colonne le azioni. Ogni cella $Q_{i, j}$ contiene il valore di quanto sia ottimale l'azione $a_j$ nello stato $s_i$, e tale valore viene aggiornato opportunamente. Tuttavia, è un metodo non applicabile ad ambienti complessi in cui il numero degli stati è enorme. Un'altro modo è quello di approssimare la funzione tramite Reti Neurali Deep, ed è questa la strada che imbocca l'agente DQN che verrà visto fra poco.
 		
-		\paragraph{Limiti di Q\texttwelveudash Learning} Anche se l'algoritmo QL appena accennato è stato prima introdotto e ne è stata poi dimostrata la convergenza, esso è conosciuto per il suo comportamento potenzialmente divergente se la funzione Q viene rappresentata da un approssimatore non lineare come le reti neurali. Come riportato in \cite{bib:dqn}, uno dei problemi che portano instabilità è che piccoli cambiamenti a Q possono cambiare significativamente la distribuzione dei dati.
-	
+		\paragraph{Limiti di Q\texttwelveudash Learning} Anche se l'algoritmo QL appena accennato è stato prima introdotto e ne è stata poi dimostrata la convergenza, esso è conosciuto per il suo comportamento potenzialmente divergente se la funzione Q viene rappresentata da un approssimatore non lineare come le reti neurali. Come riportato in \cite{bib:dqn}, uno dei problemi è che piccoli cambiamenti a Q possono cambiare significativamente la distribuzione dei dati, in più si aggiunge la correlazione fra sequenze di osservazione; insieme alla correlazione fra il vecchio valore $Q(s_t, a_t)$ e il nuovo valore appreso (nella letteratura spesso denominato come Q\texttwelveudash target o \textbf{target value}) $r_{t + 1} + \gamma \cdot \max_a Q(s_{t + 1}, a)$ facente parte dell'equazione \ref{eq:q-learning}. La correlazione tra valori consecutivi non porta a buoni risultati.
+		
 	\subsection{Deep Q\texttwelveudash Network}
-		L'agente \textit{Deep Q\texttwelveudash Network} (DQN) ha come base l'algoritmo QL precedentemente descritto, ma si può dire che lo arricchisce con tre elementi fondamentali:
+		L'agente \textit{Deep Q\texttwelveudash Network} (DQN) ha come base l'algoritmo QL precedentemente descritto. QL infatti è fondato sulla versione iterativa dell'equazione di Bellman, che a sua volta si basa sulla seguente intuizione: se il valore ottimale di una sequenza di coppie \textit{(azione, osservazione)} fosse conosciuta per ogni possibile azione prossima, allora la strategia ottimale è quella di scegliere l'azione che massimizza il valore atteso del valore appreso $r_{t + 1} + \gamma \cdot \max_a Q(s_{t + 1}, a)$. Le aggiunte fondamentali del DQN però sono le seguenti:
 		\begin{enumerate}
-			\item \textit{Convolutional Neural Network} (CNN);
+			\item \textit{Convolutional Neural Network} (CNN) per approssimare il massimo guadagno possibile seguendo una determinata politica $\pi$ (distribuzione delle probabilità su azioni da eseguire) \ref{eq:dqn-learning}, e dove viene fatto riferimento alla ricompensa in un determinato istante, $R_t$, definito dalla \ref{eq:reward} dove $T$ è il tempo di fine partita;
 			\item \textit{Experience Replay}, un meccanismo che permette di allenare la CNN usando ricordi tratti da esperienze passate;
 			\item un nuovo metodo di aggiornamento dei valori di Q, usando una seconda rete neurale deep.
 		\end{enumerate}
-	
-	
-		Gli autori dietro all'agente DQN hanno anche dimostrato che togliendo anche uno solo di questi 3 elementi i risultati peggiorano drasticamente.
+		Gli autori hanno anche dimostrato che togliendo anche uno solo di questi tre elementi i risultati peggiorano drasticamente. Seguiranno le spiegazioni più dettagliate dei cambiamento apportati.
 
-	Qui (e in introduzione) descrivere Lavoro di Deep Mind.
-	\theoremstyle{plain}
-	\newtheorem{definition}{Definizione}
-	\begin{definition}[Def]\label{def:}
-		def
-	\end{definition}
+		La funzione Q viene parametrizzata così diventando
+		\begin{center}
+			$Q(s, a; \Theta_i)$,
+		\end{center}
+		dove $\Theta_i$ sono i pesi della rete convoluzionale durante l'iterazione $i$-esima, e vengono aggiustati ad ogni iterazione per minimizzare l'errore quadratico nell'equazione di Bellman, dove le etichette vengono approssimate da
+		\begin{center}
+			$y = r + \gamma \max_{a'} Q(s', a'; \Theta_i^-)$,
+		\end{center}
+		con $\Theta_i^-$ che sono i parametri dello step precedente. La rete deep in questione viene anche chiamata Q\texttwelveudash Network. Come è già stato accennato, le etichette dipendono dai pesi della rete (al contrario di quanto si usa nell'apprendimento supervisionato), e la funzione costo (\textit{loss function}) cambia ad ogni iterazione $i$. Senza riscrivere tutti i passaggi matematici della lettera originale, ci limitiamo a riportare la funzione costo derivata rispetto ai pesi (equazione \ref{eq:gradient-loss}).
+		\begin{figure*}
+			\begin{equation}\label{eq:gradient-loss}
+				\nabla_{\Theta_i} L(\Theta_i) = \mathbb{E}_{s, a, r, s'} [(r + \gamma \max_{a'} Q(s', a'; \Theta_i^-)) \nabla_{\Theta_i} Q(s, a; \Theta_i)]
+			\end{equation}
+		\end{figure*}
+		Per bilanciare fra loro i fattori \textit{exploration} ed \textit{exploitation} nello spazio comportamentale in un determinato stato, l'algoritmo seleziona $a$ in maniera casuale con una probabilità $\epsilon$, oppure segue la politica $\pi$ con una probabilità $1 - \epsilon$, dove $\epsilon$ è determinato sperimentalmente.
+
+		\paragraph*{Experience Replay (ER)} Ad ogni passo di tempo $t$ viene archiviata l'esperienza dell'agente costituita dalla tubla $e_t = (s_t, a_t, r_t, s_{t + 1})$, che esprime rispettivamente lo stato in cui ha scelto una determinata azione, la ricompensa ricevuta e lo stato di arrivo. L'insieme delle esperienze è $D$, ed esso accumula esperienze di molteplici episodi fino a un determinato numero $N$ (l'esperimento originario ne accumula un milione). Ogni volta che un \textit{minibatch} fornisce una nuova quantità di esperienze, ne vengono raccolte altrettante nell'insieme $D$ e vengono aggiornate con quelle nuove. In breve, seguono alcuni vantaggi nell'utilizzo dell'ER:
+		\begin{itemize}
+			\item ogni esperienza può essere usata in molteplici aggiornamenti dei pesi della Q\texttwelveudash Network;
+			\item rendere casuale il campionamento di esperienze da aggiornare rompe la correlazione fra eventi consecutivi.
+		\end{itemize}
+	
+		\paragraph*{Q\texttwelveudash Network Separata} L'altra modifica è quella di aggiungere un'ulteriore rete deep per generare i label $y_i$. Ogni $C$ aggiornamenti la funzione $Q$ viene clonata come $\hat{Q}$, dove $\hat{Q}$ verrà usata per generare etichette $y_i$ per $Q$ per i prossimi $C$ passi. Anche questo è un accorgimento per evitare ciò che accade nel Q\texttwelveudash Learning classico dove, un incremento di $Q(s_t, a_t)$ influisce su $Q(s_t, a)$ per qualsiasi valore di $a$ e quindi per tutte le etichette $y_i$. Così facendo viene quindi viene evitata la divergenza dalla politica comportamentale $\pi$.
+		
+		% aggiornamento continuo articolo https://arxiv.org/pdf/1509.02971.pdf
+		
+		%\theoremstyle{plain}
+		%\newtheorem{definition}{Definizione}
+		%\begin{definition}[Def]\label{def:}
+		%	def
+		%\end{definition}
 
 	\subsection{Sotto la soglia umana}
+		PARZIALMENTE OSSERVABILE
+	
 		Introdurre il problema dei giochi che non raggiungono prestazioni umane. (postare results)
 
 \section{Reti Neurali Convoluzionali}\label{}

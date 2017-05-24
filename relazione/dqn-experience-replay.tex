@@ -218,7 +218,7 @@ Dato che i neuroni del primo strato nascosto condividono pesi e bias, questo sig
 Ovviamente per riconoscere un'immagine sono necessarie più di una feature map, quindi, uno strato convoluzionale completo è fatto da più feature maps.
 Una CNN può comporsi di più strati di convoluzione collegati in cascata. L’output di ogni strato di convoluzione è un insieme di matrici di convoluzione (ciascuna generata da una mappa di attivazione). L’insieme di queste matrici definisce un nuovo volume di input utilizzato dalle mappe di attivazione dello strato successivo. Più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad elaborare.
 
-Le CNN usano anche degli strati di \textbf{pooling} posizionati subito dopo agli strati convoluzionali, questi hanno la funzione di semplificare l'informazione di output dello strato precedente. Uno strato di pooling suddivide le matrici convoluzionali in regioni e seleziona un unico valore rappresentativo (valore massimo \textit{max-pooling} o valore medio \textit{average pooling}) al fine di ridurre i calcoli degli strati successivi e aumentare la robustezza delle feature rispetto alla posizione spaziale. In sostanza il pooling sottocampiona spazialmente ogni mappa di feature di input, ovviamente il pooling viene applicato ad ogni feature maps separatamente. 
+Le CNN usano anche degli strati di \textbf{pooling} posizionati subito dopo agli strati convoluzionali, questi hanno la funzione di semplificare l'informazione di output dello strato precedente. Uno strato di pooling suddivide le matrici convoluzionali in regioni e seleziona un unico valore rappresentativo (valore massimo \textit{max-pooling} o valore medio \textit{average pooling}) al fine di ridurre i calcoli degli strati successivi e aumentare la robustezza delle feature rispetto alla posizione spaziale. In sostanza il pooling sottocampiona spazialmente ogni mappa di feature di input, ovviamente il pooling viene applicato ad ogni feature maps separatamente.
 
 L'ultimo strato di una CNN è esattamente uguale ad uno qualsiasi dei layer di una classica rete neurale artificiale con architettura FC: collega quindi tutti i neuroni dallo strato di max-pooling a tutti i neuroni di uscita, utili a riconoscere l'output corrispondente. Combinando insieme queste tre idee avremmo una rete convoluzionale completa, la quale sarà addestrata tramite la discesa del gradiente e l’algoritmo di backpropagation.
 
@@ -231,6 +231,23 @@ Da un certo punto di vista, possiamo dire che una rete CNN, per la classificazio
 \end{itemize}
 L’addestramento di una CNN coinvolge entrambe le componenti in cui i parametri degli elementi costitutivi (p.e. neuroni) sono automaticamente variati al fine di minimizzare una funzione di costo.
 La capacità di una CNN può variare in base al numero di strati che essa possiede. Raramente si può trovare un solo strato convoluzionale, a meno che la rete in questione non sia estremamente semplice. Di solito una CNN possiede una serie di strati convoluzionali: i primi di questi, partendo dallo strato di ingresso ed andando verso lo strato di uscita, servono per ottenere feature di basso livello, come ad esempio linee orizzontali o verticali, angoli, contorni vari, ecc; più si scende nella rete, andando verso lo strato di uscita, e più le feature diventano di alto livello, ovvero esse rappresentano figure anche piuttosto complesse come dei volti, degli oggetti specifici, una scena, ecc. In sostanza dunque più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad elaborare
+
+\subsection{CNN nel contesto DQN}
+\subsubsection{Preprocessing}
+Dopo aver descritto in maniera dettagliata la struttura di una CNN è doveroso delineare il modo in cui l l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore Atari 2600.
+Per codificare un singolo frame, viene tenuto il valore massimo di colore per ogni pixel tra il frame da codificare con quello precedente. Ciò permette di rimuovere il cosiddetto \textit{flickering} presente nei giochi Atari, in cui alcuni oggetti appaiono solo in frame pari mentre altri appaiono solo in frame dispari; un artefatto causato dal numero limitato di "folletti" presenti nei giochi Atari che l'emulatore però visualizza contemporaneamente. Fatto questo, viene poi estratto il canale Y, conosciuto come luminanza, dal frame RGB e viene scalato ad una dimensione di 84 x 84.
+
+\subsubsection{Architettura del modello}
+L'architettura schematizzata della rete è mostrata in figura \ref{fig:cnnDQN} ed è strutturata come segue. 
+L'input della CNN è un'immagine che consiste nello snapshot del gioco, con dimensioni 84 x 84 x 4 prodotta dal \textit{preprocessing}. Il primo strato nascosto convoglia 32 filtri di dimensione 8 x 8 con passo 4 dall'immagine di input e viene applicato poi un rectifier (rettificatore) non lineare. Ogni strato nascosto della rete è seguito da uno strato rettificatore che ha come funzione principale quella di incrementare la proprietà di non linearità della funzione di attivazione, accennata in precedenza, senza andare a modificare i receptive field di un layer convoluzionale. Una funzione molto adatta a questo scopo, e per questo è quella utilizzata dai \textit{ReLU} layer, è $f(x) = max(0,x)$.
+Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 seguito dallo strato ReLU. Questo è seguito da un terzo strato convoluzionale che convoglia 64 filtri di dimensione 3 x 3 con passo 1 seguito anch'esso da uno strato ReLU. L'ultimo strato nascosto della rete è fully-connected e consiste di 512 unità di rectifier. Lo strato di output è uno strato lineare FC con un singolo ouput per ogni azione valida. Il numero di azioni valide variano fra 4 e 18 nei giochi Atarti considerati.
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=.2]{images/cnnDQN.jpg}
+	\caption{Illustrazione schematica della rete neurale convoluzionale.}
+	\label{fig:cnnDQN}
+\end{figure*}
 
 \begin{figure*}[h]
 	\centering

@@ -135,9 +135,6 @@
 			\begin{equation}\label{eq:q-learning}
 			Q(s_t, a_t) := Q(s_t, a_t) + \alpha_t \cdot (r_{t + 1} + \gamma \cdot \max_a Q(s_{t + 1}, a) - Q(s_t, a_t))
 			\end{equation}
-			%\begin{equation}\label{eq:dqn-learning}
-			%Q^*(s, a) = \max_\pi \mathbb{E} [r_t + \gamma r_{t + 1} + \gamma^2 r_{t %+ 2} + ... | s_t = s, a_t = a, \pi]
-			%\end{equation}
 			\begin{equation}\label{eq:reward}
 				R_t = \sum_{t' = t}^{T} \gamma^{t' - t} r_{t'}
 				% dove $T$ è il tempo di termine del gioco.
@@ -246,30 +243,74 @@ La capacità di una CNN può variare in base al numero di strati che essa possie
 	\label{fig:hlayer}
 \end{figure*}
 
-\section{Perchè non funziona}\label{}
-	\subsection{Il sospetto}
-		A livello intuitivo
-		\begin{table*}[h]
-			\centering
-			\caption{asd}
-			
-			\label{tab:gerarchia}
-		\end{table*}
-		\begin{table*}[h]
-			\centering
-			\caption{asd}
-			\label{tab:pgm}
-			
-		\end{table*}
+\section{Let's Play}\label{}
+	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.
 	
+	Secondo alcuni criteri gli autori hanno anche stabilito prestazioni sotto o sopra al livello umano. Purtroppo, mentre per circa la metà dei giochi l'agente supera le prestazioni umane in maniera impressionante, ci sono $20$ giochi su $49$ in cui l'agente non riesce a fare meglio. Si vuole provare a individuare il fattore che rende diverse (nei risultati) queste due categorie di giochi, il sospetto è che per come è stato progettato l'algoritmo DQN, esso capti ricompense di alcuni giochi in un modo che non gli permette di imparare comportamenti ottimali.
 	
-	\subsection{Perchè}
-		La "dimostrazione".
+	\subsection{Alcune prove}
+		Pur non disponendo neanche lontanamente delle risorse di calcolo a disposizione di \textit{DeepMind}, per capire meglio l'ambiente di cui stiamo parlando sono state fatte alcune prove su due giochi selezionati da diverse categorie: \textit{Breakout} e \textit{Centipede}. Il primo supera il miglior giocatore umano in maniera che si può definire fuori scala, di ben $1327\%$, mentre il secondo non ha raggiunto risultati soddisfacenti, fermandosi al $62\%$.
+
+	\subsection{Metodi di allenamento}
+		La struttura dei giochi non è stata cambiata in alcun modo tranne per il sistema delle ricompense. Qualsiasi ricompensa negativa è stata mappata su $-1$, su $1$ quelle positive e su $0$ quelle nulle. A partire da \cite{bib:dqn} non è chiaro se la fine della partita venga considerato come ricompensa negativa, in seguito ad alcune ricerche nel codice sorgente si nota come in realtà l'agente non venga punito in tal caso:
+		\begin{verbatim}
+			self.config = {
+				...
+				gameOverReward = 0,
+				...
+			}
+		\end{verbatim}
+		dove la variabile \texttt{gameOverReward} non compare più in alcun assegnamento.
 		
-\section{Prove}
-	\subsection{Gioco successo}
 	
-	\subsection{Gioco fallimento}
+	
+	===========================
+	IPOTESI: 1. in centipede ci sono troppe azioni
+			 	1a. troppi nemici a cui sparare
+		     2. i nemici arrivano fino a livello del giocatore 
+		     		(anche in stargunner, però sono di meno?)
+		     		
+	NOTA:
+			kangaroo è come montezuma, ma in mezzo al cammino ci sono reward intermedi
+			
+	SOSTANZIALMENTE CI SONO 2 DIMENSIONI che determinano il successo:
+		1. input della rete (immagine)
+		2. rewards
+	
+	
+	===========================
+	
+	In fact DQN struggles in a lot of games. Some categories it fails are:
+	
+	Environments where the reward is very sparse: In games such as Pitfall, Gravitar, Montezuma's Revenge and Private Eye DQN does terribly and one of the reasons is that they do not have a useful gradient for most of the time.
+	
+	Environments that require long-term planning: In some games (e.g. Ms. Pacman, Alien, Frostbite, Seaquest) humans plan their next steps and they set well defined goals (I'll eat that last pallet on the other side of the screen). DQN struggles with such reasoning (this is an intuition on what is going on).
+	
+	Environments where its is hard to be successful: Tennis is a very hard game for humans. Most people always lose the game. DQN also does, but because of DeepMind's normalization they look good on this game but their agent does not play it well.
+	
+\section{Prestazioni scadenti: cause individuate}
+	Prima di tutto era necessario capire l'intero ramo dell'apprendimento per rinforzo, il QL e infine le DQN, fatto ciò è possibile passare allo studio dei risultati presenti in \cite{bib:dqn}. L'attenzione era inizialmente focalizzata sul risultato di \textit{Centipede}, ma per capire il perché delle sue prestazioni non brillanti era anche necessario fare il confronto con altri giochi. Guardando i \textit{gameplay} della maggior parte del parco titoli, e consultando i relativi manuali per capire la natura delle ricompense (\textit{quante} e \textit{quando})\footnote{Atari Age, \emph{\href{https://atariage.com/software_search.php?SystemID=2600}{Atari 2600 Rarity Guide.}}} in relazione alle possibili osservazioni, è risultato chiaro che alcuni giochi in realtà si assomigliano molto per costruzione. Si stava cercando un pattern che distinguesse i giochi in cui l'algoritmo si comportasse bene o male, ma sono stati individuati almeno tre motivi per cui un agente DQN può risultare sotto le prestazioni umane.
+
+	\subsection{Pianificazione a lungo termine}
+		montezuma
+
+	\subsection{Scelte di carattere tattico}
+		pacman
+		alien
+		bowling
+	
+	\subsection{Giochi difficili}
+		centipede
+		chopper command
+	
+	
+	
+	\begin{table*}[h]
+		\centering
+		\caption{asd}
+		
+		\label{tab:gerarchia}
+	\end{table*}		
 		
 \section{Agenti Alternativi}\label{}
 	Spiegare l'evoluzione dell'argomento. (non è tutto qui, preferiremmo completare il quadro con.....)

@@ -292,16 +292,51 @@ La capacità di una CNN può variare in base al numero di strati che essa possie
 	Prima di tutto era necessario capire l'intero ramo dell'apprendimento per rinforzo, il QL e infine le DQN, fatto ciò è possibile passare allo studio dei risultati presenti in \cite{bib:dqn}. L'attenzione era inizialmente focalizzata sul risultato di \textit{Centipede}, ma per capire il perché delle sue prestazioni non brillanti era anche necessario fare il confronto con altri giochi. Guardando i \textit{gameplay} della maggior parte del parco titoli, e consultando i relativi manuali per capire la natura delle ricompense (\textit{quante} e \textit{quando})\footnote{Atari Age, \emph{\href{https://atariage.com/software_search.php?SystemID=2600}{Atari 2600 Rarity Guide.}}} in relazione alle possibili osservazioni, è risultato chiaro che alcuni giochi in realtà si assomigliano molto per costruzione. Si stava cercando un pattern che distinguesse i giochi in cui l'algoritmo si comportasse bene o male, ma sono stati individuati almeno tre motivi per cui un agente DQN può risultare sotto le prestazioni umane.
 
 	\subsection{Pianificazione a lungo termine}
-		montezuma
+		Il punto debole più ovvio di un agente DQN è la pianificazione a lungo termine, in mancanza di ricompense intermedie. Si può facilmente notare nella Figura \ref{fig:montezuma} come, nel gioco \textit{Montezuma's Revenge}, per arrivare a prendere la chiave e quindi ricevere la ricompensa, sia necessario eseguire una lunga catena di azioni diverse e osservazioni senza feedback alcuno. Pensiamo che \textit{Private Eye}, ricalcando le stesse modalità di gioco di \textit{Montezuma's Revenge}, abbia per lo stesso motivo raggiunto un risultato quasi nullo.
+		\begin{figure}[ht!]
+			\centering
+			\includegraphics[scale=.31]{images/montezuma.jpg}
+			\caption{L'eroe deve arrivare alla chiave eseguendo molteplici azioni ed evitando il teschio.}
+			\label{fig:montezuma}
+		\end{figure}
+		Inoltre, per giocare è necessario muoversi contemporanemante su più livelli, logicamente collegati. Non vediamo alcun meccanismo in grado di gestire scelte del genere.
+		
+		Almeno per quanto riguarda la singola chiave, si potrebbe ragionare sui valori di $\gamma$; si potrebbe rivedere la velocità di raffreddamento di $\epsilon$ per incentivare ulteriormente l'esplorazione; e si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
+		
+		Avremmo voluto poter verificare in maniera immediata gli effetti di piccole modifiche sul comportamento dell'agente ma, pur ammettendo di avere capacità di calcolo minimamente paragonabili a quelle a disposizione di \textit{DeepMind}, servirebbero comunque giorni di allenamento per vederne gli esiti.
 
 	\subsection{Scelte di carattere tattico}
-		pacman
-		alien
-		bowling
+		Ci risulta che un'altro punto debole dell'algoritmo proposto da \textit{DeepMind} sia il \textit{fiuto tattico}, che percepiamo come l'abilità di intuire la possibilità di uno scenario sfavorevole e reagire di conseguenza. Non c'è un meccanismo in grado incoraggiare tale comportamento, è vero che l'agente viene punito se va contro il fantasma, ma questi cambiano spesso direzione e (casualmente o no) creano delle zone trappola. Per esempio, si osservi la Figura \ref{fig:subpacman}: una sfavorevole situazione evitabile da prima facendo azioni migliori. Purtroppo, anche in questo caso l'agente DQN otterrebbe tutte le ricompense che gli spettano, senza una previsione iniziale della direzione del fantasma. Un essere umano rimane più bravo a indirizzare \textit{Pac-Man} in una parte del labirinto in cui non ci sono punti da guadagnare, per poi tornare nella parte interessante del labirinto sotto una condizione più favorevole (Figura \ref{fig:subpacman1}).
+		
+		\begin{figure}[ht!]
+			\centering
+			
+			\begin{subfigure}[b]{.49\textwidth}
+				\includegraphics[scale=1.05]{images/pacman.png}
+				\caption{Situazione sfavorevole, ma ancora riparabile, guidata per la maggiore dalla voglia di ottenere ricompense istantanee.}
+				\label{fig:subpacman}
+			\end{subfigure}
+
+			\begin{subfigure}[b]{.49\textwidth}
+				\includegraphics[scale=1.3]{images/pacman1.png}
+				\caption{Esempio di scelta sensata, quella di andare a raccogliere punti in un'altra porzione della mappa mentre i fantasmi sono impegnati altrove.}
+				\label{fig:subpacman1}
+			\end{subfigure}
+			
+			\label{fig:pacman}
+		\end{figure}
+	
+		\paragraph*{Controesempio} Per quanto riguarda il titolo \textit{Breakout}, in \cite{bib:dqn} viene riportato un caso in cui l'algoritmo individua la furbizia di creare un unico foro nel muro per mandarci la palla dietro (Figura \ref{fig:breakout}).		
+		\begin{figure*}[h]
+			\centering
+			\includegraphics[scale=.65]{images/breakout.png}
+			\caption{Dopo un considerevole numero di ore di apprendimento l'algoritmo DQN è in grado di individuare situazioni in cui una sola azione porta numerose ricompense.}
+			\label{fig:breakout}
+		\end{figure*} 
+		In un primo momento potrebbe sembrare che questo sia in contrasto con le conclusioni fatte per quato riguarda \textit{Ms. Pac-Man}. Tuttavia, pensiamo che in \textit{Breakout} la valutazione dell'ottimalità della sequenza di azioni non cambi molto a causa di eventi imprevisti. È questione di ambiente: in \textit{Breakout} non ci sono insidie improvvise (o di qualsiasi altro tipo). A parte questo, il gioco di \textit{Breakout} (così come \textit{Pong}) premiano le \textit{skill} di reattività che vengono perfettamente ricompensate in maniera istantanea. \textit{Pac-Man} (così come \textit{Alien}) non è solo questo.
 	
 	\subsection{Giochi difficili}
-		centipede
-		chopper command
+		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni in alcuni giochi, è perché non sono semplici.
 	
 	
 	

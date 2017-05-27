@@ -229,51 +229,6 @@
 %			\label{fig:code}
 %		\end{figure*}
 
-\section{Reti Neurali Convoluzionali}\label{}
-Le reti neurali convoluzionali (CNN) sono usate con grande successo per problemi di riconoscimento automatico di pattern bidimensionali come la rivelazione di oggetti, facce e loghi nelle immagini. Le normali reti neurali stratificate con un'architettura Fully Connected (FC), dove ogni neurone di ciascun layer è collegato a tutti i neuroni del layer precedente (neuroni bias esclusi), in generale non scalano bene con l'aumentare delle dimensioni delle immagini. Le CNN sono costituite da neuroni collegati tra loro tramite rami pesati e anche per questa tipologia di rete i parametri allenabili sono: \textit{weight} e \textit{bias}. La fase di allenamento di una rete neurale attraverso \textit{forward/backward propagation} e aggiornamento dei \textit{weight}, vale anche in questo contesto. 
-
-Le CNN prendono vantaggio dal fatto che l'input consiste in immagini e quindi vincolano l'architettura in modo più sensibile. A differenza di una normale rete neurale, gli strati di un CNN hanno neuroni disposti in tre dimensioni: larghezza, altezza e profondità. Inoltre, i neuroni di un layer sono connessi solo ad una piccola regione del layer precedente, invece che a tutti i neuroni come in un'architettura FC.
-Questa è la principale caratteristica che contraddistingue una CNN da una normale rete neurale stratificata con un'architettura fully connected. In figura \ref{fig:cnn} si può vedere come vengono disposti i neuroni all'interno di una CNN, infatti ciascun layer trasforma un volume 3D di input in un volume 3D di output; quest'ultimo costituisce l'insieme delle attivazioni dei neuroni di tale layer, tramite una determinata funzione di attivazione differenziabile.
-
-Questa tipologia usa principalmente tre idee di base: \textit{local receptive fields}, \textit{shared weights and biases} e \textit{pooling}. 
-Consideriamo che i pixel dello strato di input siano connessi con quelli dello strato hidden, ma non tutti, bensì solo alcuni di questi. Ogni neurone del primo strato nascosto è connesso ad una regione (ad esempio 5x5) dello strato di input, questa regione dell'immagine dello strato di input è chiamata \textbf{local receptive field} (figura \ref{fig:hlayer}). Ogni connessione apprende un peso e il neurone a cui è associata la connessione apprende un bias totale. In sostanza ogni singolo neurone esegue la convoluzione e la rete è addestrata ad apprendere i pesi e il valore del bias per minimizzare la funzione di costo. Quindi vengono connesse tutte le regioni dello strato di input ai singoli neuroni nel primo strato nascosto, effettuando di volta in volta uno shift. Così facendo se in input avessimo un'immagine 28x28 e le regioni 5x5 otterremo 24x24 neuroni nello strato nascosto.
-
-Dato che i neuroni del primo strato nascosto condividono pesi e bias, questo significa che saranno in grado di riconoscere la stessa feature, solo collocata diversamente nell'immagine di input. Questo rende le CNN molto adattabili all'invarianza di un'immagine ad una traslazione. Per questa ragione, la mappa di connessioni dallo strato di input a quello nascosto è denominata \textit{feature map}, i pesi \textbf{shared weights} e i bias \textbf{shared bias} perché condivisi. Il vantaggio di condividere i pesi e bias sta nella riduzione dei parametri coinvolti in una rete convoluzionale.
-
-Ovviamente per riconoscere un'immagine sono necessarie più di una feature map, quindi, uno strato convoluzionale completo è fatto da più feature maps.
-Una CNN può comporsi di più strati di convoluzione collegati in cascata. L’output di ogni strato di convoluzione è un insieme di matrici di convoluzione (ciascuna generata da una mappa di attivazione). L’insieme di queste matrici definisce un nuovo volume di input utilizzato dalle mappe di attivazione dello strato successivo. Più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad elaborare.
-
-Le CNN usano anche degli strati di \textbf{pooling} posizionati subito dopo agli strati convoluzionali, questi hanno la funzione di semplificare l'informazione di output dello strato precedente. Uno strato di pooling suddivide le matrici convoluzionali in regioni e seleziona un unico valore rappresentativo (valore massimo \textit{max-pooling} o valore medio \textit{average pooling}) al fine di ridurre i calcoli degli strati successivi e aumentare la robustezza delle feature rispetto alla posizione spaziale. In sostanza il pooling sottocampiona spazialmente ogni mappa di feature di input, ovviamente il pooling viene applicato ad ogni feature maps separatamente.
-
-L'ultimo strato di una CNN è esattamente uguale ad uno qualsiasi dei layer di una classica rete neurale artificiale con architettura FC: collega quindi tutti i neuroni dallo strato di max-pooling a tutti i neuroni di uscita, utili a riconoscere l'output corrispondente. Combinando insieme queste tre idee avremmo una rete convoluzionale completa, la quale sarà addestrata tramite la discesa del gradiente e l’algoritmo di backpropagation.
-
-Da un certo punto di vista, possiamo dire che una rete CNN, per la classificazione, è un sistema che si compone di due componenti fondamentali:
-\begin{itemize}
-	\item 
-	\textbf{Componente di riconoscimento ed estrazione automatica delle feature}. \\Il riconoscimento avviene mediante applicazione di banchi paralleli di filtri convoluzionali i cui elementi sono appresi automaticamente mediante algoritmo del gradiente discendente (essi corrispondono ai pesi delle connessioni dei neuroni). Intuitivamente questa componente ha come obiettivo quello di apprendere dei filtri che si attivano in presenza di un qualche specifico tipo di feature in una determinata regione spaziale dell’input.
-	\item
-	\textbf{Componente di classificazione}.
-\end{itemize}
-L’addestramento di una CNN coinvolge entrambe le componenti in cui i parametri degli elementi costitutivi (p.e. neuroni) sono automaticamente variati al fine di minimizzare una funzione di costo.
-La capacità di una CNN può variare in base al numero di strati che essa possiede. Raramente si può trovare un solo strato convoluzionale, a meno che la rete in questione non sia estremamente semplice. Di solito una CNN possiede una serie di strati convoluzionali: i primi di questi, partendo dallo strato di ingresso ed andando verso lo strato di uscita, servono per ottenere feature di basso livello, come ad esempio linee orizzontali o verticali, angoli, contorni vari, ecc; più si scende nella rete, andando verso lo strato di uscita, e più le feature diventano di alto livello, ovvero esse rappresentano figure anche piuttosto complesse come dei volti, degli oggetti specifici, una scena, ecc. In sostanza dunque più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad elaborare
-
-\subsection{CNN nel contesto DQN}
-\subsubsection{Preprocessing}
-Dopo aver descritto in maniera dettagliata la struttura di una CNN è doveroso delineare il modo in cui l l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore Atari 2600.
-Per codificare un singolo frame, viene tenuto il valore massimo di colore per ogni pixel tra il frame da codificare con quello precedente. Ciò permette di rimuovere il cosiddetto \textit{flickering} presente nei giochi Atari, in cui alcuni oggetti appaiono solo in frame pari mentre altri appaiono solo in frame dispari; un artefatto causato dal numero limitato di "folletti" presenti nei giochi Atari che l'emulatore però visualizza contemporaneamente. Fatto questo, viene poi estratto il canale Y, conosciuto come luminanza, dal frame RGB e viene scalato ad una dimensione di 84 x 84.
-
-\subsubsection{Architettura del modello}
-L'architettura schematizzata della rete è mostrata in figura \ref{fig:cnnDQN} ed è strutturata come segue. 
-L'input della CNN è un'immagine che consiste nello snapshot del gioco, con dimensioni 84 x 84 x 4 prodotta dal \textit{preprocessing}. Il primo strato nascosto convoglia 32 filtri di dimensione 8 x 8 con passo 4 dall'immagine di input e viene applicato poi un rectifier (rettificatore) non lineare. Ogni strato nascosto della rete è seguito da uno strato rettificatore che ha come funzione principale quella di incrementare la proprietà di non linearità della funzione di attivazione, accennata in precedenza, senza andare a modificare i receptive field di un layer convoluzionale. Una funzione molto adatta a questo scopo, e per questo è quella utilizzata dai \textit{ReLU} layer, è $f(x) = max(0,x)$.
-Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 seguito dallo strato ReLU. Questo è seguito da un terzo strato convoluzionale che convoglia 64 filtri di dimensione 3 x 3 con passo 1 seguito anch'esso da uno strato ReLU. L'ultimo strato nascosto della rete è fully-connected e consiste di 512 unità di rectifier. Lo strato di output è uno strato lineare FC con un singolo ouput per ogni azione valida. Il numero di azioni valide variano fra 4 e 18 nei giochi Atarti considerati.
-
-\begin{figure*}[h]
-	\centering
-	\includegraphics[scale=.2]{images/cnnDQN.jpg}
-	\caption{Illustrazione schematica della rete neurale convoluzionale.}
-	\label{fig:cnnDQN}
-\end{figure*}
-
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=.5]{images/cnn.jpeg}
@@ -284,9 +239,76 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=.5]{images/hlayer.jpeg}
-	\caption{}
+	\caption{Local receptive fields}
 	\label{fig:hlayer}
 \end{figure*}
+
+\section{Reti Neurali Convoluzionali}\label{}
+Le reti neurali convoluzionali (CNN) sono usate con grande successo per problemi di riconoscimento automatico di pattern bidimensionali come la rivelazione di oggetti, facce e loghi nelle immagini. Le normali reti neurali stratificate con un'architettura Fully Connected (FC), dove ogni neurone di ciascun layer è collegato a tutti i neuroni del layer precedente (neuroni bias esclusi), in generale non scalano bene con l'aumentare delle dimensioni delle immagini. Le CNN sono costituite da neuroni collegati tra loro tramite rami pesati e anche per questa tipologia di rete i parametri allenabili sono: \textit{weight} e \textit{bias}. La fase di allenamento di una rete neurale attraverso \textit{forward/backward propagation} e aggiornamento dei \textit{weight}, vale anche in questo contesto. 
+
+Le CNN prendono vantaggio dal fatto che l'input consiste in immagini e quindi vincolano l'architettura in modo più sensibile. A differenza di una normale rete neurale, gli strati di un CNN hanno neuroni disposti in tre dimensioni: larghezza, altezza e profondità. Inoltre, i neuroni di un layer sono connessi solo ad una piccola regione del layer precedente, invece che a tutti i neuroni come in un'architettura FC.
+Questa è la principale caratteristica che contraddistingue una CNN da una normale rete neurale stratificata con un'architettura fully connected. In figura \ref{fig:cnn} si può vedere come vengono disposti i neuroni all'interno di una CNN, infatti ciascun layer trasforma un volume 3D di input in un volume 3D di output; quest'ultimo costituisce l'insieme delle attivazioni dei neuroni di tale layer, tramite una determinata funzione di attivazione differenziabile.
+
+Questa tipologia di rete usa principalmente tre idee di base: \textit{local receptive fields}, \textit{shared weights and biases} e \textit{pooling}. 
+
+Consideriamo che i pixel dello strato di input siano connessi con quelli dello strato hidden, ma non tutti, bensì solo alcuni di questi. Ogni neurone del primo strato nascosto è connesso ad una regione (ad esempio 5x5) dello strato di input, questa regione dell'immagine dello strato di input è chiamata \textbf{local receptive field} (figura \ref{fig:hlayer}). Ogni connessione apprende un peso e il neurone a cui è associata la connessione apprende un bias totale. In sostanza ogni singolo neurone esegue la convoluzione e la rete è addestrata ad apprendere i pesi e il valore del bias per minimizzare la funzione di costo. Quindi vengono connesse tutte le regioni dello strato di input ai singoli neuroni nel primo strato nascosto, effettuando di volta in volta uno shift. Così facendo se in input avessimo un'immagine 28x28 e le regioni 5x5 otterremo 24x24 neuroni nello strato nascosto.
+
+Dato che i neuroni del primo strato nascosto condividono pesi e bias, questo significa che saranno in grado di riconoscere la stessa feature, solo collocata diversamente nell'immagine di input. Questo rende le CNN molto adattabili all'invarianza di un'immagine ad una traslazione. Per questa ragione, la mappa di connessioni dallo strato di input a quello nascosto è denominata \textit{feature map}, i pesi \textbf{shared weights} e i bias \textbf{shared bias} perché condivisi. Il vantaggio di condividere i pesi e bias sta nella riduzione dei parametri coinvolti in una rete convoluzionale.
+
+Ovviamente per riconoscere un'immagine sono necessarie più di una feature map, quindi, uno strato convoluzionale completo è fatto da più feature maps.
+Una CNN può comporsi di più strati di convoluzione collegati in cascata. L’output di ogni strato di convoluzione è un insieme di matrici di convoluzione (ciascuna generata da una mappa di attivazione). L’insieme di queste matrici definisce un nuovo volume di input utilizzato dalle mappe di attivazione dello strato successivo. Più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad elaborare.
+
+Le CNN usano anche degli strati di \textbf{pooling} posizionati subito dopo agli strati convoluzionali, questi hanno la funzione di semplificare l'informazione di output dello strato precedente. Uno strato di pooling suddivide le matrici convoluzionali in regioni e seleziona un unico valore rappresentativo (valore massimo \textit{max-pooling} o valore medio \textit{average pooling}) al fine di ridurre i calcoli degli strati successivi e aumentare la robustezza delle feature rispetto alla posizione spaziale. In sostanza il pooling sottocampiona spazialmente ogni mappa di feature di input, ovviamente il pooling viene applicato ad ogni feature maps separatamente.
+
+L'ultimo strato di una CNN è esattamente uguale ad uno qualsiasi dei layer di una classica rete neurale artificiale con architettura FC: collega quindi tutti i neuroni dallo strato di max-pooling a tutti i neuroni di uscita, utili a riconoscere l'output corrispondente.
+Questo tipo di layer, a differenza di quanto visto finora nelle reti neurali convoluzionali, non utilizza la proprietà di connettività locale: un FC layer è connesso all'intero volume di input e quindi, come si può immaginare, si avranno moltissime connessioni. L’unico parametro impostabile di questo tipo di layer è il numero di neuroni K che lo costituiscono. Ciò che fa sostanzialmente un FC layer è quello di collegare i suoi K neuroni con tutto il volume di input e di calcolare l’attivazione di ciascuno dei suoi K neuroni.
+Il suo output sarà infatti un singolo vettore 1 x 1 x K, contenente le attivazioni calcolate. Il fatto che dopo l’utilizzo di un singolo FC layer si passi da un volume di input, organizzato in 3 dimensioni, ad un singolo vettore di output, in una singola dimensione, fa intuire che dopo l’applicazione di un FC layer non si può più utilizzare alcun layer convoluzionale. La funzione principale dei FC layer nell'ambito delle reti neurali convoluzionali è quello di effettuare una sorta di raggruppamento delle informazioni ottenute fino
+a quel momento, esprimendole con un singolo numero (l’attivazione di uno dei suoi neuroni), il quale servirà nei successivi calcoli per la classificazione finale. Solitamente si utilizza più di un layer FC in serie e l’ultimo di questi avrà il parametro K pari al numero di classi presenti nel dataset. I K valori finali saranno infine date in pasto all'output layer, il quale, tramite una specifica funzione probabilistica, effettuerà la classificazione. Combinando insieme queste tre idee avremmo una rete convoluzionale completa, la quale sarà addestrata tramite la discesa del gradiente e l’algoritmo di backpropagation.
+
+Da un certo punto di vista, possiamo dire che una rete CNN, per la classificazione, è un sistema che si compone di due componenti fondamentali:
+\begin{itemize}
+	\item 
+	\textbf{Componente di riconoscimento ed estrazione automatica delle feature}. \\Il riconoscimento avviene mediante applicazione di banchi paralleli di filtri convoluzionali i cui elementi sono appresi automaticamente mediante algoritmo del gradiente discendente (essi corrispondono ai pesi delle connessioni dei neuroni). Intuitivamente questa componente ha come obiettivo quello di apprendere dei filtri che si attivano in presenza di un qualche specifico tipo di feature in una determinata regione spaziale dell’input.
+	\item
+	\textbf{Componente di classificazione}.
+\end{itemize}
+L’addestramento di una CNN coinvolge entrambe le componenti in cui i parametri degli elementi costitutivi (p.e. neuroni) sono automaticamente variati al fine di minimizzare una funzione di costo.
+La capacità di una CNN può variare in base al numero di strati che essa possiede. Raramente si può trovare un solo strato convoluzionale, a meno che la rete in questione non sia estremamente semplice. Di solito una CNN possiede una serie di strati convoluzionali: i primi di questi, partendo dallo strato di ingresso ed andando verso lo strato di uscita, servono per ottenere feature di basso livello, come ad esempio linee orizzontali o verticali, angoli, contorni vari, ecc; più si scende nella rete, andando verso lo strato di uscita, e più le feature diventano di alto livello, ovvero esse rappresentano figure anche piuttosto complesse come dei volti, degli oggetti specifici, una scena, ecc. In sostanza dunque più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad 
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=.2]{images/cnnDQN.jpg}
+	\caption{Illustrazione schematica della rete neurale convoluzionale.}
+	\label{fig:cnnDQN}
+\end{figure*}
+
+\begin{figure*}[ht!]
+	\centering
+	\lstinputlisting[]{code/fcl.py}
+	\caption{Implementazione dei layer convoluzionali}
+	\label{fig:layerConv}
+\end{figure*}
+
+\begin{figure*}[ht!]
+	\centering
+	\lstinputlisting[]{code/lfcl.py}
+	\caption{Implementazione del layer FC}
+	\label{fig:layerFC}
+\end{figure*}
+
+\subsection{CNN nel contesto DQN}
+\subsubsection{Preprocessing}
+Dopo aver descritto in maniera dettagliata la struttura di una CNN è doveroso delineare il modo in cui l l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore Atari 2600.
+Per codificare un singolo frame, viene tenuto il valore massimo di colore per ogni pixel tra il frame da codificare con quello precedente. Ciò permette di rimuovere il cosiddetto \textit{flickering} presente nei giochi Atari, in cui alcuni oggetti appaiono solo in frame pari mentre altri appaiono solo in frame dispari; un artefatto causato dal numero limitato di "folletti" presenti nei giochi Atari che l'emulatore però visualizza contemporaneamente. Fatto questo, viene poi estratto il canale Y, conosciuto come luminanza, dal frame RGB e viene scalato ad una dimensione di 84 x 84.
+
+\subsubsection{Architettura del modello}
+L'architettura schematizzata della rete è mostrata in figura \ref{fig:cnnDQN} ed è strutturata come segue. 
+L'input della CNN è un frame che consiste nello snapshot del gioco, con dimensioni 84 x 84 x 4 prodotta dal \textit{preprocessing}. Il primo strato nascosto convoglia 32 filtri di dimensione 8 x 8 con passo 4 dall'immagine di input e viene applicato poi un rectifier (rettificatore) non lineare. Ogni strato nascosto della rete è seguito da uno strato rettificatore che ha come funzione principale quella di incrementare la proprietà di non linearità della funzione di attivazione, accennata in precedenza, senza andare a modificare i receptive field di un layer convoluzionale. Una funzione molto adatta a questo scopo, e per questo è quella utilizzata dai \textit{ReLU} layer, è $f(x) = max(0,x)$.
+Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 seguito dallo strato ReLU. Questo è seguito da un terzo strato convoluzionale che convoglia 64 filtri di dimensione 3 x 3 con passo 1 seguito anch'esso da uno strato ReLU. L'ultimo strato nascosto della rete è fully-connected e consiste di 512 unità di rectifier. Lo strato di output è uno strato lineare FC con un singolo ouput per ogni azione valida. Il numero di azioni valide variano fra 4 e 18 nei giochi Atarti considerati dallo studio.
+
+\subsubsection{Implementazione}
+Dopo aver descritto l'architettura della CNN utilizzata per questo studio, analizzeremo l'implementazione della struttura. Come accennato in precedenza, il tutto è stato sviluppato in \textit{Lua} con riferimenti a librerie di IA, ma per lo sviluppo della CNN è indispensabile la libreria \textit{Torch}, un framework scientifico di calcolo con ampio supporto per gli algoritmi di machine learning che predilige le GPU. In figura \ref{fig:layerConv} viene mostrata la parte di codice della funzione \textit{create\_network(args)} che implementa i layer convoluzionali con diversi parametri come descritto nella sezione precedente.
+L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli strati FC, dove vengono collegati tutti i neuroni di uscita, con la funzione principale di effettuare una sorta di raggruppamento delle informazioni ottenute fino a quel momento esprimendole con un singolo numero (l’attivazione di uno dei suoi neuroni), ovvero, l'azione da compiere.
 
 \section{Let's Play}\label{}
 	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.

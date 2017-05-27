@@ -87,7 +87,7 @@
 
 \pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 \posttitle{\end{center}} % Article title closing formatting
-\title{Apprendimento per Rinforzo:\\Agente Deep Q\texttwelveudash Network e\\ cause di inefficacia} % Article title
+\title{Apprendimento per Rinforzo:\\Agente Deep Q\texttwelveudash Network e\\ Casi di Inefficacia} % Article title
 \author{%
 \textsc{Maxim Gaina e Bartolomeo Lombardi} \\[1ex] % Your name
 \normalsize Università di Bologna\thanks{Progetto per il corso di Complementi di Linguaggi di Programmazione, A.A. 2016/2017, prof. Andrea Asperti.} \\ % Your institution
@@ -187,6 +187,47 @@
 		\end{itemize}
 	
 		\paragraph*{Q\texttwelveudash Network Separata} L'altra modifica è quella di aggiungere un'ulteriore rete deep per generare i label $y_i$. Ogni $C$ aggiornamenti la funzione $Q$ viene clonata come $\hat{Q}$, dove $\hat{Q}$ verrà usata per generare etichette $y_i$ per $Q$ per i prossimi $C$ passi. Anche questo è un accorgimento per evitare ciò che accade nel Q\texttwelveudash Learning classico dove, un incremento di $Q(s_t, a_t)$ influisce su $Q(s_t, a)$ per qualsiasi valore di $a$ e quindi per tutte le etichette $y_i$. Così facendo viene quindi viene evitata la divergenza dalla politica comportamentale $\pi$.
+		
+	\subsection{Implementazione in LUA}
+		Il linguaggio usato da \textit{DeepMind} per l'implementazione dell'algoritmo DQN è \texttt{LUA}. Si tratta di un linguaggio di programmazione che punta su efficienza e \textit{leggerezza}, e supporta diversi paradigmi come la programmazione procedurale, orientata agli oggetti, funzionale e programmazione descrittiva dei dati. \texttt{LUA} è noto per essere usato in ambiti ludici (\textit{World of Warcraft} e molti giochi per android sono scritti in \texttt{LUA}) e, a quanto pare anche \textit{DeepMind}, avendo a che fare con i videogiochi, non si è allontanata troppo dal trend.
+		
+		\paragraph*{Dipendenze} Per metterci le mani sopra, è stata usata una fork del codice originario che permette di vedere anche graficamente sia l'apprendimento che l'esecuzione dei test\footnote{DeepMind Atari Q\texttwelveudash Learner, \emph{\href{https://github.com/kuz/DeepMind-Atari-Deep-Q-Learner}{GitHub Repository.}}}. In breve, sono state usate le seguenti principali dipendenze:
+		\begin{itemize}
+			\item \textit{Xitari}, fork di \textit{The Arcade Learning Envoirnment}\footnote{ALE, \emph{\href{http://www.arcadelearningenvironment.org/}{Arcade Platform for General Artificial Intelligence development.}}} che permette a chiunque di sviluppare agenti di intelligenza artificiale in grado di interfacciarsi con l'emulatore Atari 2600 \textit{Stella}\footnote{Stella, \emph{\href{https://github.com/stella-emu/stella}{Atari 2600 Emulator.}}};
+			\item \texttt{AleWrap}, interfaccia \texttt{LUA} per \texttt{Xitari};
+			\item \texttt{LuaJIT}, compilatore \textit{Just in Time} per \texttt{LUA};
+			\item \texttt{Torch 7.0}, framework per computazioni di carattere scientifico e ampio supporto ad algoritmi di apprendimento automatico;
+			\item \texttt{nn}, libreria potente per fornire un metodo facile e modulare per costruire e allenare reti neurali.
+		\end{itemize}
+	
+		È possibile allenare il proprio agente usando le proprie \texttt{CPU} o \texttt{GPU} (o una in particolare) tramite i relativi script. Ogni script contiene i parametri di lancio: passi da eseguire, ogni quanti passi eseguire la validazione, valore iniziale di $\gamma$ ed $\epsilon$, learning rate ed altri parzialmente riportati nella Figura \ref{code:run}.
+		
+		\begin{figure*}[ht!]
+			\centering
+			\caption{Costruzione del modello con \texttt{Keras}}
+			\lstinputlisting{code/run}
+			\label{code:run}
+		\end{figure*}
+	
+		\subsubsection{train\_agent}
+			Si tratta del file con codice \texttt{LUA} in cui:
+			\begin{itemize}
+				\item contiene la ricezione e l'elaborazione degli iperparametri e parametri visti prima;
+				\item viene creato l'ambiente del gioco selezionato (possibili ricompense e possibili azioni) e viene istanziato l'agente con tutte le sue opzioni;
+				\item a tempo di esecuzione vengono mantenute tutte le informazioni riguardarni il tempo stesso di esecuzione, numero di ricompense, numero di episodi e di step già fatti, e così via;
+			\end{itemize}
+			
+			. Vengono a tempo di esecuzione mantenute.
+			
+			
+		
+		
+%		\begin{figure*}[ht!]
+%			\centering
+%			\caption{Costruzione del modello con \texttt{Keras}}
+%			%\lstinputlisting[language=Python]{code/seq.py}
+%			\label{fig:code}
+%		\end{figure*}
 
 \section{Reti Neurali Convoluzionali}\label{}
 Le reti neurali convoluzionali (CNN) sono usate con grande successo per problemi di riconoscimento automatico di pattern bidimensionali come la rivelazione di oggetti, facce e loghi nelle immagini. Le normali reti neurali stratificate con un'architettura Fully Connected (FC), dove ogni neurone di ciascun layer è collegato a tutti i neuroni del layer precedente (neuroni bias esclusi), in generale non scalano bene con l'aumentare delle dimensioni delle immagini. Le CNN sono costituite da neuroni collegati tra loro tramite rami pesati e anche per questa tipologia di rete i parametri allenabili sono: \textit{weight} e \textit{bias}. La fase di allenamento di una rete neurale attraverso \textit{forward/backward propagation} e aggiornamento dei \textit{weight}, vale anche in questo contesto. 
@@ -246,14 +287,6 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 	\caption{}
 	\label{fig:hlayer}
 \end{figure*}
-
-\section{Implementazione in LUA}
-	\begin{figure*}[ht!]
-		\centering
-		\caption{Costruzione del modello con \texttt{Keras}}
-		\lstinputlisting[language=Python]{code/seq.py}
-		\label{fig:code}
-	\end{figure*}
 
 \section{Let's Play}\label{}
 	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.

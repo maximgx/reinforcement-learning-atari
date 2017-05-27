@@ -1,0 +1,18 @@
+#!/bin/bash
+
+agent="NeuralQLearner"
+netfile="\"convnet_atari3\""
+update_freq=4                # Aggiornamento ogni 4 frame
+actrep=4
+discount=0.99                # Valore iniziale gamma
+replay_memory=1000000        # Dimensione dell'insieme D (Transition Table)
+eps_end=0.1                  # Valore finale di epsilon
+eps_endt=replay_memory       # Assestare epsilon la prima volta che D risulta pieno
+lr=0.00025                   # Learning rate
+state_dim=7056               # Dimensione stato data da 84 per 84 pixel
+
+# Altri iperparametri: valore iniziale di epsilon, range ricompense, ecc...
+agent_params="lr="$lr",ep=1,ep_end="$eps_end",ep_endt="$eps_endt",discount="$discount",hist_len=4,learn_start="$learn_start",replay_memory="$replay_memory",update_freq="$update_freq",n_replay="$n_replay",network="$netfile",preproc="$preproc_net",state_dim="$state_dim",minibatch_size=32,rescale_r=1,ncols="$ncols",bufferSize=512,valid_size=500,target_q=10000,clip_delta=1,min_reward=-1,max_reward=1"
+
+steps=50000000               # Step totali
+save_freq=125000             # Frequenza di salvataggio dei parametri

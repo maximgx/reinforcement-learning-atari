@@ -188,6 +188,20 @@
 	
 		\paragraph*{Q\texttwelveudash Network Separata} L'altra modifica è quella di aggiungere un'ulteriore rete deep per generare i label $y_i$. Ogni $C$ aggiornamenti la funzione $Q$ viene clonata come $\hat{Q}$, dove $\hat{Q}$ verrà usata per generare etichette $y_i$ per $Q$ per i prossimi $C$ passi. Anche questo è un accorgimento per evitare ciò che accade nel Q\texttwelveudash Learning classico dove, un incremento di $Q(s_t, a_t)$ influisce su $Q(s_t, a)$ per qualsiasi valore di $a$ e quindi per tutte le etichette $y_i$. Così facendo viene quindi viene evitata la divergenza dalla politica comportamentale $\pi$.
 
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=.5]{images/cnn.jpeg}
+	\caption{Neuroni di una CNN}
+	\label{fig:cnn}
+\end{figure*}
+
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=.5]{images/hlayer.jpeg}
+	\caption{}
+	\label{fig:hlayer}
+\end{figure*}
+
 \section{Reti Neurali Convoluzionali}\label{}
 Le reti neurali convoluzionali (CNN) sono usate con grande successo per problemi di riconoscimento automatico di pattern bidimensionali come la rivelazione di oggetti, facce e loghi nelle immagini. Le normali reti neurali stratificate con un'architettura Fully Connected (FC), dove ogni neurone di ciascun layer è collegato a tutti i neuroni del layer precedente (neuroni bias esclusi), in generale non scalano bene con l'aumentare delle dimensioni delle immagini. Le CNN sono costituite da neuroni collegati tra loro tramite rami pesati e anche per questa tipologia di rete i parametri allenabili sono: \textit{weight} e \textit{bias}. La fase di allenamento di una rete neurale attraverso \textit{forward/backward propagation} e aggiornamento dei \textit{weight}, vale anche in questo contesto. 
 
@@ -215,6 +229,26 @@ Da un certo punto di vista, possiamo dire che una rete CNN, per la classificazio
 \end{itemize}
 L’addestramento di una CNN coinvolge entrambe le componenti in cui i parametri degli elementi costitutivi (p.e. neuroni) sono automaticamente variati al fine di minimizzare una funzione di costo.
 La capacità di una CNN può variare in base al numero di strati che essa possiede. Raramente si può trovare un solo strato convoluzionale, a meno che la rete in questione non sia estremamente semplice. Di solito una CNN possiede una serie di strati convoluzionali: i primi di questi, partendo dallo strato di ingresso ed andando verso lo strato di uscita, servono per ottenere feature di basso livello, come ad esempio linee orizzontali o verticali, angoli, contorni vari, ecc; più si scende nella rete, andando verso lo strato di uscita, e più le feature diventano di alto livello, ovvero esse rappresentano figure anche piuttosto complesse come dei volti, degli oggetti specifici, una scena, ecc. In sostanza dunque più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad elaborare
+\begin{figure*}[h]
+	\centering
+	\includegraphics[scale=.2]{images/cnnDQN.jpg}
+	\caption{Illustrazione schematica della rete neurale convoluzionale.}
+	\label{fig:cnnDQN}
+\end{figure*}
+
+\begin{figure*}[ht!]
+	\centering
+	\caption{Implementazione dei layer convoluzionali}
+	\lstinputlisting[]{code/fcl.py}
+	\label{fig:layerConv}
+\end{figure*}
+
+\begin{figure*}[ht!]
+	\centering
+	\caption{Implementazione del layer FC e layer lineare}
+	\lstinputlisting[]{code/lfcl.py}
+	\label{fig:layerFC}
+\end{figure*}
 
 \subsection{CNN nel contesto DQN}
 \subsubsection{Preprocessing}
@@ -223,37 +257,13 @@ Per codificare un singolo frame, viene tenuto il valore massimo di colore per og
 
 \subsubsection{Architettura del modello}
 L'architettura schematizzata della rete è mostrata in figura \ref{fig:cnnDQN} ed è strutturata come segue. 
-L'input della CNN è un'immagine che consiste nello snapshot del gioco, con dimensioni 84 x 84 x 4 prodotta dal \textit{preprocessing}. Il primo strato nascosto convoglia 32 filtri di dimensione 8 x 8 con passo 4 dall'immagine di input e viene applicato poi un rectifier (rettificatore) non lineare. Ogni strato nascosto della rete è seguito da uno strato rettificatore che ha come funzione principale quella di incrementare la proprietà di non linearità della funzione di attivazione, accennata in precedenza, senza andare a modificare i receptive field di un layer convoluzionale. Una funzione molto adatta a questo scopo, e per questo è quella utilizzata dai \textit{ReLU} layer, è $f(x) = max(0,x)$.
-Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 seguito dallo strato ReLU. Questo è seguito da un terzo strato convoluzionale che convoglia 64 filtri di dimensione 3 x 3 con passo 1 seguito anch'esso da uno strato ReLU. L'ultimo strato nascosto della rete è fully-connected e consiste di 512 unità di rectifier. Lo strato di output è uno strato lineare FC con un singolo ouput per ogni azione valida. Il numero di azioni valide variano fra 4 e 18 nei giochi Atarti considerati.
+L'input della CNN è un frame che consiste nello snapshot del gioco, con dimensioni 84 x 84 x 4 prodotta dal \textit{preprocessing}. Il primo strato nascosto convoglia 32 filtri di dimensione 8 x 8 con passo 4 dall'immagine di input e viene applicato poi un rectifier (rettificatore) non lineare. Ogni strato nascosto della rete è seguito da uno strato rettificatore che ha come funzione principale quella di incrementare la proprietà di non linearità della funzione di attivazione, accennata in precedenza, senza andare a modificare i receptive field di un layer convoluzionale. Una funzione molto adatta a questo scopo, e per questo è quella utilizzata dai \textit{ReLU} layer, è $f(x) = max(0,x)$.
+Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 seguito dallo strato ReLU. Questo è seguito da un terzo strato convoluzionale che convoglia 64 filtri di dimensione 3 x 3 con passo 1 seguito anch'esso da uno strato ReLU. L'ultimo strato nascosto della rete è fully-connected e consiste di 512 unità di rectifier. Lo strato di output è uno strato lineare FC con un singolo ouput per ogni azione valida. Il numero di azioni valide variano fra 4 e 18 nei giochi Atarti considerati dallo studio.
 
-\begin{figure*}[h]
-	\centering
-	\includegraphics[scale=.2]{images/cnnDQN.jpg}
-	\caption{Illustrazione schematica della rete neurale convoluzionale.}
-	\label{fig:cnnDQN}
-\end{figure*}
+\subsubsection{Implementazione}
+Dopo aver descritto l'architettura della CNN utilizzata per questo studio, analizzeremo l'implementazione della struttura. Come accennato in precedenza, il tutto è stato sviluppato in \textit{Lua} con riferimenti a librerie di IA, ma per lo sviluppo della CNN è indispensabile la libreria \textit{Torch}, un framework scientifico di calcolo con ampio supporto per gli algoritmi di machine learning che predilige le GPU. In figura \ref{fig:layerConv} viene mostrata la parte di codice della funzione \textit{create\_network(args)} che implementa i tre layer convoluzionali con diversi parametri come descritto nella sezione precedente.
+L'ultima parte nonché essenziale della rete sono gli ultimi layer 
 
-\begin{figure*}[h]
-	\centering
-	\includegraphics[scale=.5]{images/cnn.jpeg}
-	\caption{Neuroni di una CNN}
-	\label{fig:cnn}
-\end{figure*}
-
-\begin{figure*}[h]
-	\centering
-	\includegraphics[scale=.5]{images/hlayer.jpeg}
-	\caption{}
-	\label{fig:hlayer}
-\end{figure*}
-
-\section{Implementazione in LUA}
-	\begin{figure*}[ht!]
-		\centering
-		\caption{Costruzione del modello con \texttt{Keras}}
-		\lstinputlisting[language=Python]{code/seq.py}
-		\label{fig:code}
-	\end{figure*}
 
 \section{Let's Play}\label{}
 	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.

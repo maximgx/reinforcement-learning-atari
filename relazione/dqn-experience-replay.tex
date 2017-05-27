@@ -87,7 +87,7 @@
 
 \pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 \posttitle{\end{center}} % Article title closing formatting
-\title{Reinforcement Learning e\\ Agenti basati su Experience Replay:\\ Caso di Studio di Inefficacia} % Article title
+\title{Apprendimento per Rinforzo:\\Agente Deep Q\texttwelveudash Network e\\ cause di inefficacia} % Article title
 \author{%
 \textsc{Maxim Gaina e Bartolomeo Lombardi} \\[1ex] % Your name
 \normalsize Università di Bologna\thanks{Progetto per il corso di Complementi di Linguaggi di Programmazione, A.A. 2016/2017, prof. Andrea Asperti.} \\ % Your institution
@@ -100,7 +100,7 @@
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
 \begin{abstract}
-\noindent Data la rete neurale Deep Q\texttwelveudash Network ideata e implementata da DeepMind, l'obiettivo di questo lavoro di progetto consiste nel comprendere per quale motivo tale agente, in breve DQN, ha ottenuto risultati sotto la soglia delle prestazioni umane su un sottoinsieme del parco giochi Atari 2600. Verrà quindi studiato l'Apprendimento per Rinforzo, il modello Experience Replay e l'architettura delle reti neurali sottostanti; pur non disponendo delle stesse risorse di calcolo, verranno fatte delle prove pratiche in grado di mimare i risultati ottenuti precedentemente, analizzandoli. Infine si cercherà di dare uno sguardo a quali sono state le innovazioni in questo ambito.
+\noindent Data la rete neurale Deep Q\texttwelveudash Network ideata e implementata da DeepMind, l'obiettivo di questo lavoro di progetto consiste nel comprendere per quale motivo tale agente, in breve DQN, ha ottenuto risultati sotto la soglia delle prestazioni umane su un sottoinsieme del parco giochi Atari 2600. Verrà quindi studiato l'Apprendimento per Rinforzo, l'algoritmo Q\texttwelveudash Learning e la sua evoluzione DQN assieme all'architettura delle reti neurali sottostanti; in maniera aggiuntiva, pur non disponendo delle stesse risorse di calcolo, si cercheranno di fare delle prove pratiche in grado di mimare i risultati ottenuti precedentemente, analizzandoli. Infine verrà dato uno sguardo a quali sono state le innovazioni in questo ambito.
 \end{abstract}
 }
 
@@ -187,19 +187,6 @@
 		\end{itemize}
 	
 		\paragraph*{Q\texttwelveudash Network Separata} L'altra modifica è quella di aggiungere un'ulteriore rete deep per generare i label $y_i$. Ogni $C$ aggiornamenti la funzione $Q$ viene clonata come $\hat{Q}$, dove $\hat{Q}$ verrà usata per generare etichette $y_i$ per $Q$ per i prossimi $C$ passi. Anche questo è un accorgimento per evitare ciò che accade nel Q\texttwelveudash Learning classico dove, un incremento di $Q(s_t, a_t)$ influisce su $Q(s_t, a)$ per qualsiasi valore di $a$ e quindi per tutte le etichette $y_i$. Così facendo viene quindi viene evitata la divergenza dalla politica comportamentale $\pi$.
-		
-		% aggiornamento continuo articolo https://arxiv.org/pdf/1509.02971.pdf
-		
-		%\theoremstyle{plain}
-		%\newtheorem{definition}{Definizione}
-		%\begin{definition}[Def]\label{def:}
-		%	def
-		%\end{definition}
-
-	\subsection{Sotto la soglia umana}
-		PARZIALMENTE OSSERVABILE
-	
-		Introdurre il problema dei giochi che non raggiungono prestazioni umane. (postare results)
 
 \section{Reti Neurali Convoluzionali}\label{}
 Le reti neurali convoluzionali (CNN) sono usate con grande successo per problemi di riconoscimento automatico di pattern bidimensionali come la rivelazione di oggetti, facce e loghi nelle immagini. Le normali reti neurali stratificate con un'architettura Fully Connected (FC), dove ogni neurone di ciascun layer è collegato a tutti i neuroni del layer precedente (neuroni bias esclusi), in generale non scalano bene con l'aumentare delle dimensioni delle immagini. Le CNN sono costituite da neuroni collegati tra loro tramite rami pesati e anche per questa tipologia di rete i parametri allenabili sono: \textit{weight} e \textit{bias}. La fase di allenamento di una rete neurale attraverso \textit{forward/backward propagation} e aggiornamento dei \textit{weight}, vale anche in questo contesto. 
@@ -259,6 +246,14 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 	\caption{}
 	\label{fig:hlayer}
 \end{figure*}
+
+\section{Implementazione in LUA}
+	\begin{figure*}[ht!]
+		\centering
+		\caption{Costruzione del modello con \texttt{Keras}}
+		\lstinputlisting[language=Python]{code/seq.py}
+		\label{fig:code}
+	\end{figure*}
 
 \section{Let's Play}\label{}
 	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.
@@ -353,9 +348,23 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 		In un primo momento potrebbe sembrare che questo sia in contrasto con le conclusioni fatte per quato riguarda \textit{Ms. Pac-Man}. Tuttavia, pensiamo che in \textit{Breakout} la valutazione dell'ottimalità della sequenza di azioni non cambi molto a causa di eventi imprevisti. È questione di ambiente: in \textit{Breakout} non ci sono insidie improvvise (o di qualsiasi altro tipo). A parte questo, il gioco di \textit{Breakout} (così come \textit{Pong}) premiano le \textit{skill} di reattività che vengono perfettamente ricompensate in maniera istantanea. \textit{Pac-Man} (così come \textit{Alien}) non è solo questo.
 	
 	\subsection{Giochi difficili}
-		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni in alcuni giochi, è perché non sono semplici.
+		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni ottime in alcuni giochi, è perché non sono "semplici" quanto \textit{Breakout} e simili sparatutto (\textit{Space Invader, Deamon Attack}), dove bisogna andare a destra e a sinistra nel momento giusto; si intendono anche i giochi come \textit{Robotank} che sembrano diversi e addirittura in 3D, dove in realtà si tratta sempre di mirare verso destra o sinistra e sparare al momento giusto.
+		
+		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura [FIGURA]), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.
 	
+		\begin{figure}[ht!]
+			\centering
+			%\includegraphics[scale=.4]{img/rnn.png}
+			\caption{asd}
+			\label{fig:centipede}
+		\end{figure}
 	
+		In più è stato notato che appena dopo la morte del giocatore (punizione $-1$) il gioco si ferma e assegna una ricompensa $+1$ per ogni fungo presente sullo schermo. Questo potrebbe, come minimo, insegnare all'algoritmo che tutto sommato morire non è poi talmente tragico.
+		%Prioritized Sampling
+		
+		%On one hand, a more efficient sampling method should emphasize the transitions from which the agent can learn the most. And we all know that transi-tions with positive rewards are more informative and valuable for learning. So we assign these transitions with higher priority to be sampled during training. This	modification of sampling can make transitions with positive rewards be sampled more frequently so as to learn optimal policies faster. On the other hand, we 		add an explicit penalty term to every transition being accessed to reduce the probability of being sampled again. The degrees of punishment will be higher with the increase of sampled times in order to make parts of the transitions never been sampled recently have chances to be reused in time. More importantly, we set the priority of sampling by measuring the magnitude of rewards higher than the latter. + average score + better learning rate
+		
+		% aggiornamento continuo articolo https://arxiv.org/pdf/1509.02971.pdf
 	
 	\begin{table*}[h]
 		\centering
@@ -364,7 +373,7 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 		\label{tab:gerarchia}
 	\end{table*}		
 		
-\section{Agenti Alternativi}\label{}
+\section{Evoluzione degli Algoritmi RL}\label{sec:evoalg}
 	Spiegare l'evoluzione dell'argomento. (non è tutto qui, preferiremmo completare il quadro con.....)
 	
 	===
@@ -375,13 +384,6 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 		%\includegraphics[scale=.4]{img/rnn.png}
 		\caption{asd}
 		\label{fig:unroll}
-	\end{figure*}
-
-	\begin{figure*}[h]
-		\centering
-		%\includegraphics[scale=.5]{img/lstm.png}
-		\caption{asd}
-		\label{fig:lstm}
 	\end{figure*}
 
 	\begin{figure*}[h]
@@ -398,28 +400,6 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 		\label{fig:parmap}
 	\end{figure*}
 	
-	\begin{equation}\label{eq:ft}
-		f_t = \sigma(W_f \cdot [h_{t - 1}, x_t] + b_f)
-	\end{equation}
-	
-	\begin{figure*}[h]
-		\centering
-		%\includegraphics[scale=.3]{img/seqs.jpeg}
-		\caption{Problemi \textit{sequence-to-sequence} trattabili con le \texttt{RNN}}
-		\label{fig:seqs}
-	\end{figure*}
-	\begin{figure}
-		\centering
-		%\includegraphics[scale=.26]{img/blstm.png}
-		\caption{Architettura astratta di una rete \texttt{BLSTM}}
-		\label{fig:blstm}
-	\end{figure}
-	\begin{figure*}[ht!]
-		\centering
-		\caption{Costruzione del modello con \texttt{Keras}}
-		%\lstinputlisting[language=Python]{code/seq.py}
-		\label{fig:modelcode}
-	\end{figure*}
 	\begin{table*}[]
 		\centering
 		\caption{Risultati ottenuti in seguito al lavoro di progetto, confrontati con il modello \texttt{LDCNF}.}

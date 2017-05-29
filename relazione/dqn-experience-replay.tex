@@ -358,53 +358,28 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 Dopo aver descritto l'architettura della CNN utilizzata per questo studio, analizzeremo l'implementazione della struttura. Come accennato in precedenza, il tutto è stato sviluppato in \textit{Lua} con riferimenti a librerie di IA, ma per lo sviluppo della CNN è indispensabile la libreria \textit{Torch}, un framework scientifico di calcolo con ampio supporto per gli algoritmi di machine learning che predilige le GPU. In figura \ref{fig:layerConv} viene mostrata la parte di codice della funzione \textit{create\_network(args)} che implementa i layer convoluzionali con diversi parametri come descritto nella sezione precedente.
 L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli strati FC, dove vengono collegati tutti i neuroni di uscita, con la funzione principale di effettuare una sorta di raggruppamento delle informazioni ottenute fino a quel momento esprimendole con un singolo numero (l’attivazione di uno dei suoi neuroni), ovvero, l'azione da compiere.
 
-\section{Let's Play}\label{}
+\section{Game Over}\label{}
 	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.
 	
 	Secondo alcuni criteri gli autori hanno anche stabilito prestazioni sotto o sopra al livello umano. Purtroppo, mentre per circa la metà dei giochi l'agente supera le prestazioni umane in maniera impressionante, ci sono $20$ giochi su $49$ in cui l'agente non riesce a fare meglio. Si vuole provare a individuare il fattore che rende diverse (nei risultati) queste due categorie di giochi, il sospetto è che per come è stato progettato l'algoritmo DQN, esso capti ricompense di alcuni giochi in un modo che non gli permette di imparare comportamenti ottimali.
 	
 	\subsection{Alcune prove}
-		Pur non disponendo neanche lontanamente delle risorse di calcolo a disposizione di \textit{DeepMind}, per capire meglio l'ambiente di cui stiamo parlando sono state fatte alcune prove su due giochi selezionati da diverse categorie: \textit{Breakout} e \textit{Centipede}. Il primo supera il miglior giocatore umano in maniera che si può definire fuori scala, di ben $1327\%$, mentre il secondo non ha raggiunto risultati soddisfacenti, fermandosi al $62\%$.
-
-	\subsection{Metodi di allenamento}
-		La struttura dei giochi non è stata cambiata in alcun modo tranne per il sistema delle ricompense. Qualsiasi ricompensa negativa è stata mappata su $-1$, su $1$ quelle positive e su $0$ quelle nulle. A partire da \cite{bib:dqn} non è chiaro se la fine della partita venga considerato come ricompensa negativa, in seguito ad alcune ricerche nel codice sorgente si nota come in realtà l'agente non venga punito in tal caso:
-		\begin{verbatim}
-			self.config = {
-				...
-				gameOverReward = 0,
-				...
-			}
-		\end{verbatim}
-		dove la variabile \texttt{gameOverReward} non compare più in alcun assegnamento.
+		Pur non disponendo neanche lontanamente delle risorse di calcolo a disposizione di \textit{DeepMind}, l'\textbf{intenzione} iniziale era quella di accompagnare lo studio dei risultati non soddisfacenti con alcune prove pratiche, per capire meglio l'ambiente di cui stiamo parlando. Sono state fatte alcune prove su due giochi selezionati da diverse categorie: \textit{Breakout} e \textit{Centipede}. Il primo supera il miglior giocatore umano in maniera che si può definire fuori scala, di ben $1327\%$, mentre il secondo non ha raggiunto risultati soddisfacenti, fermandosi al $62\%$.
 		
-	
-	
-	===========================
-	IPOTESI: 1. in centipede ci sono troppe azioni
-			 	1a. troppi nemici a cui sparare
-		     2. i nemici arrivano fino a livello del giocatore 
-		     		(anche in stargunner, però sono di meno?)
-		     		
-	NOTA:
-			kangaroo è come montezuma, ma in mezzo al cammino ci sono reward intermedi
-			
-	SOSTANZIALMENTE CI SONO 2 DIMENSIONI che determinano il successo:
-		1. input della rete (immagine)
-		2. rewards
-	
-	
-	===========================
-	
-	In fact DQN struggles in a lot of games. Some categories it fails are:
-	
-	Environments where the reward is very sparse: In games such as Pitfall, Gravitar, Montezuma's Revenge and Private Eye DQN does terribly and one of the reasons is that they do not have a useful gradient for most of the time.
-	
-	Environments that require long-term planning: In some games (e.g. Ms. Pacman, Alien, Frostbite, Seaquest) humans plan their next steps and they set well defined goals (I'll eat that last pallet on the other side of the screen). DQN struggles with such reasoning (this is an intuition on what is going on).
-	
-	Environments where its is hard to be successful: Tennis is a very hard game for humans. Most people always lose the game. DQN also does, but because of DeepMind's normalization they look good on this game but their agent does not play it well.
-	
+		Gli step totali eseguiti da \textit{DeepMind} sono $50mln$, che su un PC normale equivale ad aspettare in termini di settimane (o poco più di un mese). In un primo tentativo volevamo vedere cosa succede allenando la rete per soli $700.000$ step, scoprendo che circa $12$ ore ($24$ in totale sia per \textit{Centipede} che \textit{Breakout}) non bastano neanche lontanamente per far emergere qualche comportamento sensato da parte dell'agente. Il punteggio di \textit{Breakout} era di soli $55$ punti (con l'agente sempre fermo alla sinistra dello schermo con qualche tremolio verso destra) mentre la rete allenata per \textit{Centipede} accumulava soli $1811$ punti. In un secondo tentativo di $1,25mln$ di step, ipotizzando che il riempimento della \texttt{TransitionTable} migliorasse in qualche modo la situazione, per solo \textit{Centipede} è stato raggiunto il non molto brillante punteggio di $1911$.
+		
+		È chiaro che per computazioni del genere in maniera efficiente non basta il computer di casa. Bisogna specificare però che è stata usata la \texttt{CPU} che è un \texttt{i5 4690K}, dato che dopo aver provato due versioni di \texttt{Ubuntu} non risultava essere alcun driver \texttt{CUDA GTX980} compatibile al giorno d'oggi anche con l'implementazione del DQN. Per quanto riguarda il lato pratico quindi, è tutto quello che è stato possibile realizzare.
+		
 \section{Prestazioni scadenti: cause individuate}
-	Prima di tutto era necessario capire l'intero ramo dell'apprendimento per rinforzo, il QL e infine le DQN, fatto ciò è possibile passare allo studio dei risultati presenti in \cite{bib:dqn}. L'attenzione era inizialmente focalizzata sul risultato di \textit{Centipede}, ma per capire il perché delle sue prestazioni non brillanti era anche necessario fare il confronto con altri giochi. Guardando i \textit{gameplay} della maggior parte del parco titoli, e consultando i relativi manuali per capire la natura delle ricompense (\textit{quante} e \textit{quando})\footnote{Atari Age, \emph{\href{https://atariage.com/software_search.php?SystemID=2600}{Atari 2600 Rarity Guide.}}} in relazione alle possibili osservazioni, è risultato chiaro che alcuni giochi in realtà si assomigliano molto per costruzione. Si stava cercando un pattern che distinguesse i giochi in cui l'algoritmo si comportasse bene o male, ma sono stati individuati almeno tre motivi per cui un agente DQN può risultare sotto le prestazioni umane.
+	Prima di tutto era necessario capire l'intero ramo dell'apprendimento per rinforzo, il QL e infine le DQN, fatto ciò è possibile passare allo studio dei risultati presenti in \cite{bib:dqn}. L'attenzione era inizialmente focalizzata sul risultato di \textit{Centipede}, ma per capire il perché delle sue prestazioni non brillanti era anche necessario fare il confronto con altri giochi. Guardando i \textit{gameplay} della maggior parte del parco titoli, e consultando i relativi manuali per capire la natura delle ricompense (\textit{quante} e \textit{quando})\footnote{Atari Age, \emph{\href{https://atariage.com/software_search.php?SystemID=2600}{Atari 2600 Rarity Guide.}}} in relazione alle possibili osservazioni, è risultato chiaro che alcuni giochi in realtà si assomigliano molto per costruzione. Si stava cercando un pattern che distinguesse i giochi in cui l'algoritmo si comportasse bene o male, ma sono stati individuati almeno tre motivi per cui un agente DQN può risultare sotto le prestazioni umane. È necessario ricordare prima di procedere, che la struttura dei giochi non è stata cambiata in alcun modo tranne per il sistema delle ricompense. Qualsiasi ricompensa negativa è stata mappata su $-1$, su $1$ quelle positive e su $0$ quelle nulle. A partire da \cite{bib:dqn} non è chiaro se la fine della partita venga considerato come ricompensa negativa, in seguito ad alcune ricerche nel codice sorgente si nota come in realtà l'agente non venga punito in tal caso:
+	\begin{verbatim}
+	self.config = {
+	...
+	gameOverReward = 0,
+	...
+	}
+	\end{verbatim}
+	dove la variabile \texttt{gameOverReward} non compare più in alcun assegnamento.
 
 	\subsection{Pianificazione a lungo termine}
 		Il punto debole più ovvio di un agente DQN è la pianificazione a lungo termine, in mancanza di ricompense intermedie. Si può facilmente notare nella Figura \ref{fig:montezuma} come, nel gioco \textit{Montezuma's Revenge}, per arrivare a prendere la chiave e quindi ricevere la ricompensa, sia necessario eseguire una lunga catena di azioni diverse e osservazioni senza feedback alcuno. Pensiamo che \textit{Private Eye}, ricalcando le stesse modalità di gioco di \textit{Montezuma's Revenge}, abbia per lo stesso motivo raggiunto un risultato quasi nullo.
@@ -478,7 +453,9 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 	--- DQN
 	double
 	prioritized sampling
-	epsilon		
+	epsilon	
+	
+	dove non si usa q-learning (o experience replay) ma policy gradient
 	
 	--- A3C
 

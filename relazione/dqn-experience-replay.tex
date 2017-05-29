@@ -145,11 +145,11 @@
 		\end{figure*}
 		L'equazione \ref{eq:q-learning} descrive l'algoritmo QL.
 		
-		\paragraph*{Learning rate $\alpha_t$} O anche \textit{tasso di apprendimento}, viene usato per regolare quanto un nuovo aggiornamento incide su quello che è già stato appreso, e si ha che $0 \leq \alpha_t \leq 1$. Infatti il valore $0$ è un estremo che indica che l'algoritmo non memorizzerà nulla, mentre il valore $1$ specifica che bisogna memorizzare solo le informazioni più recenti.
+		\paragraph*{Learning rate $\alpha_t$}\label{par:lr} O anche \textit{tasso di apprendimento}, viene usato per regolare quanto un nuovo aggiornamento incide su quello che è già stato appreso, e si ha che $0 \leq \alpha_t \leq 1$. Infatti il valore $0$ è un estremo che indica che l'algoritmo non memorizzerà nulla, mentre il valore $1$ specifica che bisogna memorizzare solo le informazioni più recenti.
 		
-		\paragraph*{Discount factor $\gamma$} Oppure \textit{fattore di sconto}, che aiuta a determinare l'importanza delle ricompense ricevute. Analogamente a prima si ha che $0 \leq \gamma \leq 1$, dove lo zero imposta l'attenzione dell'algoritmo sulle ricompense immediate, mentre il valore $1$ induce a scelte in funzione di ricompense migliori a lungo termine.
+		\paragraph*{Discount factor $\gamma$}\label{par:gamma} Oppure \textit{fattore di sconto}, che aiuta a determinare l'importanza delle ricompense ricevute. Analogamente a prima si ha che $0 \leq \gamma \leq 1$, dove lo zero imposta l'attenzione dell'algoritmo sulle ricompense immediate, mentre il valore $1$ induce a scelte in funzione di ricompense migliori a lungo termine.
 		
-		\paragraph*{Ricompensa $r_{t + 1}$}	Infine, $r_{t + 1}$ indica la ricompensa stessa dopo aver eseguito $a$ dentro a $s_t$. La ricompensa è una sommatoria pesata dei valori attesi di ricompense ottenibili dagli \textbf{step} futuri a partire dallo stato corrente, e per i futuri $\Delta t$ step i pesi sono calcolati da $\gamma^{\Delta t}$.
+		\paragraph*{Ricompensa $r_{t + 1}$}\label{par:reward} Infine, $r_{t + 1}$ indica la ricompensa stessa dopo aver eseguito $a$ dentro a $s_t$. La ricompensa è una sommatoria pesata dei valori attesi di ricompense ottenibili dagli \textbf{step} futuri a partire dallo stato corrente, e per i futuri $\Delta t$ step i pesi sono calcolati da $\gamma^{\Delta t}$.
 		
 		È detto \textbf{episodio} dell'algoritmo la sequenza di stati che termina con uno stato finale. In un videogioco l'episodio si può vedere come il tentativo di raggiungere un obbiettivo, o completare un livello, che può finire con fallimento e successo. Solitamente è necessario un ampio numero di episodi prima che l'agente sia in grado di fare qualcosa di accettabile. Le implementazioni dell'algoritmo QL sono varie, ma la forma più semplice si basa su una tabella in cui le righe possono essere gli stati e le colonne le azioni. Ogni cella $Q_{i, j}$ contiene il valore di quanto sia ottimale l'azione $a_j$ nello stato $s_i$, e tale valore viene aggiornato opportunamente. Tuttavia, è un metodo non applicabile ad ambienti complessi in cui il numero degli stati è enorme. Un'altro modo è quello di approssimare la funzione tramite Reti Neurali Deep, ed è questa la strada che imbocca l'agente DQN che verrà visto fra poco.
 		
@@ -180,7 +180,7 @@
 		\end{figure*}
 		Per bilanciare fra loro i fattori \textit{exploration} ed \textit{exploitation} nello spazio comportamentale in un determinato stato, l'algoritmo seleziona $a$ in maniera casuale con una probabilità $\epsilon$, oppure segue la politica $\pi$ con una probabilità $1 - \epsilon$, dove $\epsilon$ è determinato sperimentalmente.
 
-		\paragraph*{Experience Replay (ER)} Ad ogni passo di tempo $t$ viene archiviata l'esperienza dell'agente costituita dalla tupla $e_t = (s_t, a_t, r_t, s_{t + 1})$, che esprime rispettivamente lo stato in cui ha scelto una determinata azione, la ricompensa ricevuta e lo stato di arrivo. L'insieme delle esperienze è $D$, ed esso accumula esperienze di molteplici episodi fino a un determinato numero $N$ (l'esperimento originario ne accumula un milione). Ogni volta che un \textit{minibatch} fornisce una nuova quantità di esperienze, ne vengono raccolte altrettante nell'insieme $D$ e vengono aggiornate con quelle nuove. In breve, seguono alcuni vantaggi nell'utilizzo dell'ER:
+		\paragraph*{Experience Replay (ER)}\label{par:er} Ad ogni passo di tempo $t$ viene archiviata l'esperienza dell'agente costituita dalla tupla $e_t = (s_t, a_t, r_t, s_{t + 1})$, che esprime rispettivamente lo stato in cui ha scelto una determinata azione, la ricompensa ricevuta e lo stato di arrivo. L'insieme delle esperienze è $D$, ed esso accumula esperienze di molteplici episodi fino a un determinato numero $N$ (l'esperimento originario ne accumula un milione). Ogni volta che un \textit{minibatch} fornisce una nuova quantità di esperienze, ne vengono raccolte altrettante nell'insieme $D$ e vengono aggiornate con quelle nuove. In breve, seguono alcuni vantaggi nell'utilizzo dell'ER:
 		\begin{itemize}
 			\item ogni esperienza può essere usata in molteplici aggiornamenti dei pesi della Q\texttwelveudash Network;
 			\item rendere casuale il campionamento di esperienze da aggiornare rompe la correlazione fra eventi consecutivi.
@@ -197,37 +197,85 @@
 			\item \texttt{AleWrap}, interfaccia \texttt{LUA} per \texttt{Xitari};
 			\item \texttt{LuaJIT}, compilatore \textit{Just in Time} per \texttt{LUA};
 			\item \texttt{Torch 7.0}, framework per computazioni di carattere scientifico e ampio supporto ad algoritmi di apprendimento automatico;
-			\item \texttt{nn}, libreria potente per fornire un metodo facile e modulare per costruire e allenare reti neurali.
+			\item \texttt{nn}, libreria potente per fornire un metodo facile e modulare per costruire e allenare reti neurali (molto simile a \texttt{Keras} con i suoi modelli sequenziali).
 		\end{itemize}
 	
-		È possibile allenare il proprio agente usando le proprie \texttt{CPU} o \texttt{GPU} (o una in particolare) tramite i relativi script. Ogni script contiene i parametri di lancio: passi da eseguire, ogni quanti passi eseguire la validazione, valore iniziale di $\gamma$ ed $\epsilon$, learning rate ed altri parzialmente riportati nella Figura \ref{code:run}.
-		
+		È possibile allenare il proprio agente usando le proprie \texttt{CPU} o \texttt{GPU} (o una in particolare) tramite i relativi script. Ogni script contiene i seguenti iperparametri (parametri che servono prima del lancio): passi da eseguire, ogni quanti passi eseguire la validazione, valore iniziale di $\gamma$ ed $\epsilon$, learning rate ed altri parzialmente riportati nella Figura \ref{code:run}. L'implementazione in \texttt{LUA} è abbastanza corposa quindi verranno ora riportate le parti ritenuti fondamentali.
 		\begin{figure*}[ht!]
 			\centering
-			\caption{Costruzione del modello con \texttt{Keras}}
+			\caption{Parte dello script di lancio \texttt{run\_cpu}}
 			\lstinputlisting{code/run}
 			\label{code:run}
 		\end{figure*}
 	
 		\subsubsection{train\_agent}
-			Si tratta del file con codice \texttt{LUA} in cui:
+			Si tratta del file con codice \texttt{LUA} che:
 			\begin{itemize}
-				\item contiene la ricezione e l'elaborazione degli iperparametri e parametri visti prima;
+				\item contiene la ricezione e l'elaborazione degli iperparametri visti prima;
 				\item viene creato l'ambiente del gioco selezionato (possibili ricompense e possibili azioni) e viene istanziato l'agente con tutte le sue opzioni;
 				\item a tempo di esecuzione vengono mantenute tutte le informazioni riguardarni il tempo stesso di esecuzione, numero di ricompense, numero di episodi e di step già fatti, e così via;
 			\end{itemize}
-			
-			. Vengono a tempo di esecuzione mantenute.
-			
-			
+			Ma l'importanza di \texttt{train\_agent} nella gerarchia dei file sorgente è data dalla presenza del ciclo che itera i passi di apprendimento fino al massimo dichiarato (che di default ricordiamo essere $50mln$). Dato che il ciclo contiene parecchio codice, viene riportata la sua versione riassuntiva nella figura \ref{code:tagent}.
+			\begin{figure*}[ht!]
+				\centering
+				\caption{Ciclo \texttt{while} fondamentale riportato in maniera riassuntiva nel file \texttt{training\_agent}}
+				\lstinputlisting[language={[5.0]Lua}]{code/tagent.lua}
+				\label{code:tagent}
+			\end{figure*}
 		
-		
-%		\begin{figure*}[ht!]
-%			\centering
-%			\caption{Costruzione del modello con \texttt{Keras}}
-%			%\lstinputlisting[language=Python]{code/seq.py}
-%			\label{fig:code}
-%		\end{figure*}
+		\subsubsection{NeuralQLearner}
+			Alla riga $7$ in Figura \ref{code:tagent} che riporta il ciclo while nel file \texttt{train\_agent}, è presente il metodo
+			\begin{verbatim}
+				perceive(reward, screen, terminal).
+			\end{verbatim}
+			Esso appartiene a \texttt{NeuralQLearner.lua}. Si tratta dell'implementazione stessa dell'algoritmo DQN, di conseguenza ecco quanto accade qui alla sua istanziazione:
+			\begin{itemize}
+				\item gli iperparametri vengono usati per inizializzare la rete convoluzionale di cui si parlerà più tardi in \ref{sec:cnn};
+				\item vengono inizializzati i parametri che regolano il comportamento \textbf{exploration vs. exploitation} (cioè $\epsilon$ e relativi parametri di raffreddamento durante il processo di apprendimento)
+				\item inizializzazione e raffreddamento del \textit{learning rate} (visto in \ref{par:lr});
+				\item il così detto \texttt{discount factor}, che in realtà è il valore $\gamma$ visto in \ref{par:gamma};
+				\item istanziazione della classe \texttt{TransitionTable}, che in realtà l'implementazione dell'insieme $D$ contenente le esperienze, visto in \ref{par:reward};
+				\begin{verbatim}
+					self.transitions = 
+					         dqn.TransitionTable(args)
+				\end{verbatim}
+				\item e altri parametri relativi al massimo e minimo della ricompensa, ecc...
+			\end{itemize}
+			
+			Riteniamo importante ora elencare i principali metodi di \texttt{NeuralQLearner}, che modificano iterativamente i parametri e i valor inizializzati elencati appena sopra:
+			\begin{enumerate}
+				\item 	
+				\begin{verbatim}
+					preprocess(rawstate)			
+				\end{verbatim}
+					Prende in input l'immagine grezza perché poi sia pronta per essere elaborata dalla rete (preprocesamento spiegato in \ref{subsubsec:preproc});
+				\item 
+				\begin{verbatim}
+					getQUpdate(args)
+				\end{verbatim}
+					Per ogni azione viene ritornato l'aggiornamento del valore Q, ricordiamo che la rete neurale approssima il valore ottimale per ogni azione disponibile. Si tratta di un'iterazione espressa dall'equazione \ref{eq:dqn-learning};
+				\item
+				\begin{verbatim}
+					qLearnMinibatch
+				\end{verbatim}
+					Dopo aver ottenuto il nuovo valore di Q invocando \texttt{getQUpdate(args)}, il metodo aggiorna i pesi della rete neurale tramite il calcolo del gradiente, in base al minibatch di nuove esperienze che poi verranno salvate anche nella \texttt{TransitionTable}. Questo è quanto esprime l'equazione \ref{eq:gradient-loss}.
+				\item 
+				\begin{verbatim}
+					perceive(reward, rawstate, terminal
+					         testing, testing_ep)
+				\end{verbatim}
+					Il metodo \texttt{perceive(args)} esprime la principale iterazione e quindi viene riportato nella Figura 
+				\item
+				\begin{verbatim}
+					eGreedy(state, testing_ep)
+				\end{verbatim}
+					Dato il valore aggiornato di $\epsilon$, prende un valore casuale che se è minore di $\epsilon$ ritorna la prossima azione come casuale, altrimenti invoca il metodo \texttt{greedy(state)};
+				\item
+				\begin{verbatim}
+					greedy(state)
+				\end{verbatim}
+					Dato lo stato, valuta tutte le azioni possibili e ritorna l'azione ritenuta ottimane.
+			\end{enumerate}
 
 \begin{figure*}[h]
 	\centering
@@ -243,7 +291,7 @@
 	\label{fig:hlayer}
 \end{figure*}
 
-\section{Reti Neurali Convoluzionali}\label{}
+\section{Reti Neurali Convoluzionali}\label{sec:cnn}
 Le reti neurali convoluzionali (CNN) sono usate con grande successo per problemi di riconoscimento automatico di pattern bidimensionali come la rivelazione di oggetti, facce e loghi nelle immagini. Le normali reti neurali stratificate con un'architettura Fully Connected (FC), dove ogni neurone di ciascun layer è collegato a tutti i neuroni del layer precedente (neuroni bias esclusi), in generale non scalano bene con l'aumentare delle dimensioni delle immagini. Le CNN sono costituite da neuroni collegati tra loro tramite rami pesati e anche per questa tipologia di rete i parametri allenabili sono: \textit{weight} e \textit{bias}. La fase di allenamento di una rete neurale attraverso \textit{forward/backward propagation} e aggiornamento dei \textit{weight}, vale anche in questo contesto. 
 
 Le CNN prendono vantaggio dal fatto che l'input consiste in immagini e quindi vincolano l'architettura in modo più sensibile. A differenza di una normale rete neurale, gli strati di un CNN hanno neuroni disposti in tre dimensioni: larghezza, altezza e profondità. Inoltre, i neuroni di un layer sono connessi solo ad una piccola regione del layer precedente, invece che a tutti i neuroni come in un'architettura FC.
@@ -297,7 +345,7 @@ La capacità di una CNN può variare in base al numero di strati che essa possie
 \end{figure*}
 
 \subsection{CNN nel contesto DQN}
-\subsubsection{Preprocessing}
+\subsubsection{Preprocessing}\label{subsubsec:preproc}
 Dopo aver descritto in maniera dettagliata la struttura di una CNN è doveroso delineare il modo in cui l l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore Atari 2600.
 Per codificare un singolo frame, viene tenuto il valore massimo di colore per ogni pixel tra il frame da codificare con quello precedente. Ciò permette di rimuovere il cosiddetto \textit{flickering} presente nei giochi Atari, in cui alcuni oggetti appaiono solo in frame pari mentre altri appaiono solo in frame dispari; un artefatto causato dal numero limitato di "folletti" presenti nei giochi Atari che l'emulatore però visualizza contemporaneamente. Fatto questo, viene poi estratto il canale Y, conosciuto come luminanza, dal frame RGB e viene scalato ad una dimensione di 84 x 84.
 
@@ -405,64 +453,40 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 	\subsection{Giochi difficili}
 		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni ottime in alcuni giochi, è perché non sono "semplici" quanto \textit{Breakout} e simili sparatutto (\textit{Space Invader, Deamon Attack}), dove bisogna andare a destra e a sinistra nel momento giusto; si intendono anche i giochi come \textit{Robotank} che sembrano diversi e addirittura in 3D, dove in realtà si tratta sempre di mirare verso destra o sinistra e sparare al momento giusto.
 		
-		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura [FIGURA]), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.
-	
-		\begin{figure}[ht!]
+		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura \ref{fig:centipede}), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.
+		\begin{figure}[t]
 			\centering
-			%\includegraphics[scale=.4]{img/rnn.png}
-			\caption{asd}
+			\includegraphics[scale=.5]{images/centipede1.png}
+			\caption{Situazione (neanche delle più difficili) in cui l'elfo si ritrova con pezzi di centipede e altri nemici che si muovono a grande velocità intorno al protagonista.}
 			\label{fig:centipede}
 		\end{figure}
-	
-		In più è stato notato che appena dopo la morte del giocatore (punizione $-1$) il gioco si ferma e assegna una ricompensa $+1$ per ogni fungo presente sullo schermo. Questo potrebbe, come minimo, insegnare all'algoritmo che tutto sommato morire non è poi talmente tragico.
-		%Prioritized Sampling
-		
-		%On one hand, a more efficient sampling method should emphasize the transitions from which the agent can learn the most. And we all know that transi-tions with positive rewards are more informative and valuable for learning. So we assign these transitions with higher priority to be sampled during training. This	modification of sampling can make transitions with positive rewards be sampled more frequently so as to learn optimal policies faster. On the other hand, we 		add an explicit penalty term to every transition being accessed to reduce the probability of being sampled again. The degrees of punishment will be higher with the increase of sampled times in order to make parts of the transitions never been sampled recently have chances to be reused in time. More importantly, we set the priority of sampling by measuring the magnitude of rewards higher than the latter. + average score + better learning rate
-		
-		% aggiornamento continuo articolo https://arxiv.org/pdf/1509.02971.pdf
-	
-	\begin{table*}[h]
-		\centering
-		\caption{asd}
-		
-		\label{tab:gerarchia}
-	\end{table*}		
-		
+		In più è stato notato che appena dopo la morte del giocatore (punizione $-1$) il gioco si ferma e assegna una ricompensa $+1$ per ogni fungo (quadratini sullo schermo). Questo potrebbe, come minimo, insegnare all'algoritmo che tutto sommato morire non è poi talmente tragico. Esistono in rete discussioni di appassionati del settore che dopo settimane di allenamento non riuscivano a ottenere un agente DQN in \textit{Centipede} che cercasse di muoversi efficientemente sull'asse verticale per evitare il contatto con i nemici.
+		\begin{figure*}[ht!]
+			\centering
+			\caption{Il metodo \texttt{perceive(args)} della classe NeuralQLearner, approssimante la funzione Q con l'ausilio di reti \texttt{CNN}.}
+			\lstinputlisting[language={[5.0]Lua}]{code/neuralqlearner.lua}
+			\label{code:nql}
+		\end{figure*}
+
 \section{Evoluzione degli Algoritmi RL}\label{sec:evoalg}
-	Spiegare l'evoluzione dell'argomento. (non è tutto qui, preferiremmo completare il quadro con.....)
+	%Prioritized Sampling
 	
+	%On one hand, a more efficient sampling method should emphasize the transitions from which the agent can learn the most. And we all know that transi-tions with positive rewards are more informative and valuable for learning. So we assign these transitions with higher priority to be sampled during training. This	modification of sampling can make transitions with positive rewards be sampled more frequently so as to learn optimal policies faster. On the other hand, we 		add an explicit penalty term to every transition being accessed to reduce the probability of being sampled again. The degrees of punishment will be higher with the increase of sampled times in order to make parts of the transitions never been sampled recently have chances to be reused in time. More importantly, we set the priority of sampling by measuring the magnitude of rewards higher than the latter. + average score + better learning rate
+	
+	% aggiornamento continuo articolo https://arxiv.org/pdf/1509.02971.pdf
+	
+	--- DQN
+	double
+	prioritized sampling
+	epsilon		
+	
+	--- A3C
+
+	Spiegare l'evoluzione dell'argomento. (non è tutto qui, preferiremmo completare il quadro con.....)
 	===
 	Unlike policy gradient methods, which attempt to learn functions which directly map an observation to an action, Q-Learning attempts to learn the value of being in a given state, and taking a specific action there.
 
-	\begin{figure*}[h]
-		\centering
-		%\includegraphics[scale=.4]{img/rnn.png}
-		\caption{asd}
-		\label{fig:unroll}
-	\end{figure*}
-
-	\begin{figure*}[h]
-		\centering
-		\begin{subfigure}[b]{.496\textwidth}
-			%\includegraphics[width=\textwidth]{img/inside-lstm.png}
-			\caption{asd}
-		\end{subfigure}
-		\begin{subfigure}[b]{.496\textwidth}
-			%\includegraphics[width=\textwidth]{img/inside-lstm2.png}
-			\caption{Parametri calcolati nelle ultime fasi}
-		\end{subfigure}
-		\caption{asd}
-		\label{fig:parmap}
-	\end{figure*}
-	
-	\begin{table*}[]
-		\centering
-		\caption{Risultati ottenuti in seguito al lavoro di progetto, confrontati con il modello \texttt{LDCNF}.}
-		\label{tab:results}
-		
-	\end{table*}
-	
-	\section{Conclusioni}	
+	\section{Conclusioni}
 	
 \begin{thebibliography}{99}	
 	\bibitem{bib:dqn}

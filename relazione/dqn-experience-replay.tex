@@ -100,7 +100,7 @@
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
 \begin{abstract}
-\noindent Data la rete neurale Deep Q\texttwelveudash Network ideata e implementata da DeepMind, l'obiettivo di questo lavoro di progetto consiste nel comprendere per quale motivo tale agente, in breve DQN, ha ottenuto risultati sotto la soglia delle prestazioni umane su un sottoinsieme del parco giochi Atari 2600. Verrà quindi studiato l'Apprendimento per Rinforzo, l'algoritmo Q\texttwelveudash Learning e la sua evoluzione DQN assieme all'architettura delle reti neurali sottostanti; in maniera aggiuntiva, pur non disponendo delle stesse risorse di calcolo, si cercheranno di fare delle prove pratiche in grado di mimare i risultati ottenuti precedentemente, analizzandoli. Infine verrà dato uno sguardo a quali sono state le innovazioni in questo ambito.
+\noindent Dato l'algoritmo Deep Q\texttwelveudash Network ideata e implementata da DeepMind, l'obiettivo di questo lavoro di progetto consiste nel comprendere per quale motivo tale agente, in breve DQN, ha ottenuto risultati sotto la soglia delle prestazioni umane su un sottoinsieme del parco giochi Atari 2600. Verrà quindi studiato l'Apprendimento per Rinforzo, l'algoritmo Q\texttwelveudash Learning e la sua evoluzione DQN assieme all'architettura delle reti neurali sottostanti; in maniera aggiuntiva, pur non disponendo delle stesse risorse di calcolo, si cercheranno di fare delle prove pratiche in grado di mimare i risultati ottenuti precedentemente, analizzandoli. Infine verrà dato uno sguardo a quali sono state le innovazioni in questo ambito.
 \end{abstract}
 }
 
@@ -113,7 +113,7 @@
 \section*{Introduzione}
 	\lettrine[nindent = 0.4em,lines=3]{N}\space\MakeTextLowercase{e}ll'ambito del \textit{Machine Learning} si possono individuare diversi stili nella risoluzione dei problemi. L'apprendimento \textit{supervisionato} prevede che a un modello vengano forniti esempi di input e relativi output, affinché esso individui delle regole in grado di mappare input futuri nella maniera più corretta possibile. Esistono diverse metriche in grado di individuare le prestazioni di un modello. L'apprendimento \textit{non supervisionato} invece, ammette che al modello vengano forniti dati non etichettati. Il suo compito sarà poi quello di individuare autonomamente dei pattern o delle features. Il tipo di apprendimento che viene preso in considerazione in questo progetto è l'apprendimento \textit{per rinforzo} (\textit{Reinforcement Learning, RL}). Si può dire che gli algoritmi RL interagiscono con ambienti dinamici in cui ci sono degli obiettivi da raggiungere, per poi ricevere un feedback sotto forma di \textit{premio} o \textit{punizione}. In altre parole, ci sono degli input e degli output etichettati come nell'apprendimento supervisionato, ma le etichette dei dati in output cambiano per adattarsi meglio all'ambiente.
 	
-	Una tecnica per affrontare i problemi RL è l'algoritmo \texttt{Q\texttwelveudash Learning} che, preso singolarmente, in alcuni casi presenta imperfezioni e persino comportamenti divergenti. È stato formalizzato e implementato dalla \textit{start-up} DeepMind un agente in grado di imparare a giocare all'intero parco titoli di Atari 2600, tramite reti neurali deep che approssimano l'algoritmo \textit{Q\texttwelveudash Learning}. Quest'ultimo però, per risolvere i problema legati alla sua stabilità, è stato modificato inserendo il concetto di \textbf{Experience Replay} e altre modifiche che verranno citate più tardi. È necessario capire la motivazione fondamentale dietro a questi sforzi, cioè quella di creare un singolo algoritmo in grado di affrontare un'ampia varietà di problemi, che a sua volta è da sempre un obiettivo dell'Intelligenza Artificiale Generale. Un unico modello che affronta un intero parco giochi è un ottimo allenamento: per la maggior parte dei giochi Atari 2600 sono stati ottenuti risultati brillanti. Esiste tuttavia un insieme di giochi in cui l'agente \textit{Deep Q\texttwelveudash Network} (DQN) non supera le prestazioni umane o non migliora le metriche ottenuti da metodi precedentemente usati. In questo progetto si prenderà uno dei giochi in cui l'agente DQN non si dimostra particolarmente bravo e si cercherà di capire perché.
+	Una tecnica per affrontare i problemi RL è l'algoritmo \texttt{Q\texttwelveudash Learning} che, preso singolarmente, in alcuni casi presenta imperfezioni e persino comportamenti divergenti. È stato formalizzato e implementato dalla \textit{start-up} DeepMind un agente in grado di imparare a giocare all'intero parco titoli di Atari 2600, tramite reti neurali deep che approssimano la funzione Q. L'algoritmo \textit{Q\texttwelveudash Learning} però, per risolvere i problema legati alla sua stabilità, è stato modificato inserendo il concetto di \textbf{Experience Replay} e altre modifiche che verranno citate più tardi. È necessario capire la motivazione fondamentale dietro a questi sforzi, cioè quella di creare un singolo algoritmo in grado di affrontare un'ampia varietà di problemi, che a sua volta è da sempre un obiettivo dell'Intelligenza Artificiale Generale. Un unico modello che affronta un intero parco giochi è un ottimo allenamento: per la maggior parte dei giochi Atari 2600 sono stati ottenuti risultati brillanti. Esiste tuttavia un insieme di giochi in cui l'agente \textit{Deep Q\texttwelveudash Network} (DQN) non supera le prestazioni umane o non migliora le metriche ottenute da metodi precedentemente usati. In questo progetto si prenderà uno dei giochi in cui l'agente DQN non si dimostra particolarmente bravo e si cercherà di capire perché.
 	
 	La relazione è strutturata in questo modo:
 	\begin{itemize}
@@ -162,7 +162,7 @@
 		\begin{enumerate}
 			\item \textit{Convolutional Neural Network} (CNN) per approssimare il massimo guadagno possibile seguendo una determinata politica $\pi$ (distribuzione delle probabilità su azioni da eseguire) \ref{eq:dqn-learning}, e dove viene fatto riferimento alla ricompensa in un determinato istante, $R_t$, definito dalla \ref{eq:reward} dove $T$ è il tempo di fine partita;
 			\item \textit{Experience Replay}, un meccanismo che permette di allenare la CNN usando ricordi tratti da esperienze passate;
-			\item un nuovo metodo di aggiornamento dei valori di Q, usando una seconda rete neurale deep.
+			\item un nuovo metodo di aggiornamento dei valori di Q, usando un clone della rete neurale originaria.
 		\end{enumerate}
 		Gli autori hanno anche dimostrato che togliendo anche uno solo di questi tre elementi i risultati peggiorano drasticamente. Seguiranno le spiegazioni più dettagliate dei cambiamento apportati.
 
@@ -170,17 +170,19 @@
 		\begin{center}
 			$Q(s, a; \Theta_i)$,
 		\end{center}
-		dove $\Theta_i$ sono i pesi della rete convoluzionale durante l'iterazione $i$-esima, e vengono aggiustati ad ogni iterazione per minimizzare l'errore quadratico nell'equazione di Bellman, dove le etichette vengono approssimate da
+		dove $\Theta_i$ sono i pesi della rete deep durante l'iterazione $i$-esima, e vengono aggiustati ad ogni iterazione per minimizzare l'errore quadratico nell'equazione di Bellman, dove le etichette vengono approssimate da
 		\begin{center}
 			$y = r + \gamma \max_{a'} Q(s', a'; \Theta_i^-)$,
 		\end{center}
-		con $\Theta_i^-$ che sono i parametri dello step precedente. La rete deep in questione viene anche chiamata Q\texttwelveudash Network. Come è già stato accennato, le etichette dipendono dai pesi della rete (al contrario di quanto si usa nell'apprendimento supervisionato), e la funzione costo (\textit{loss function}) cambia ad ogni iterazione $i$. Senza riscrivere tutti i passaggi matematici della lettera originale, ci limitiamo a riportare la funzione costo derivata rispetto ai pesi (equazione \ref{eq:gradient-loss}).
+		con $\Theta_i^-$ che sono i parametri della rete deep allo step precedente (mantenuti appunti da un clone della rete). La rete deep in questione viene anche chiamata Q\texttwelveudash Network. Come è già stato accennato, le etichette dipendono dai pesi della rete (al contrario di quanto si usa nell'apprendimento supervisionato), e la funzione costo (\textit{loss function}) cambia ad ogni iterazione $i$. Senza riscrivere tutti i passaggi matematici della lettera originale, ci limitiamo a riportare la funzione costo derivata rispetto ai pesi (equazione \ref{eq:gradient-loss}).
 		\begin{figure*}
 			\begin{equation}\label{eq:gradient-loss}
 				\nabla_{\Theta_i} L(\Theta_i) = \mathbb{E}_{s, a, r, s'} [(r + \gamma \max_{a'} Q(s', a'; \Theta_i^-)) \nabla_{\Theta_i} Q(s, a; \Theta_i)]
 			\end{equation}
 		\end{figure*}
-		Per bilanciare fra loro i fattori \textit{exploration} ed \textit{exploitation} nello spazio comportamentale in un determinato stato, l'algoritmo seleziona $a$ in maniera casuale con una probabilità $\epsilon$, oppure segue la politica $\pi$ con una probabilità $1 - \epsilon$, dove $\epsilon$ è determinato sperimentalmente.
+	
+		\paragraph{Exploration vs. Exploitation}
+		Spesso quando che si affrontano problemi del genere sorge una difficoltà: bilanciare il comportamento dell'algoritmo fra l'esplorazione di nuove mosse casuale in un certo stato, che non ha mai provato prima, oppure essere più \textit{conservatori}, seguendo rigorosamente la propria esperienza rigettando le novità. La soluzione consiste nell'essere tutti e due al momento giusto, infatti il DQN partirà preferendo quasi esclusivamente le nuove esperienze, diventando via via più fedele alla propria politica di comportamento man mano che diventa più attendibile.	Per bilanciare quindi fra loro i fattori \textit{exploration} ed \textit{exploitation} nello spazio comportamentale in un determinato stato, l'algoritmo seleziona $a$ in maniera casuale con una probabilità $\epsilon$, oppure segue la politica $\pi$ con una probabilità $1 - \epsilon$. Ma $\epsilon$ partirà con un valore prossimo a $1$ è verrà \textit{raffreddato} al valore finale $0.1$ verso il milionesimo step.
 
 		\paragraph*{Experience Replay (ER)}\label{par:er} Ad ogni passo di tempo $t$ viene archiviata l'esperienza dell'agente costituita dalla tupla $e_t = (s_t, a_t, r_t, s_{t + 1})$, che esprime rispettivamente lo stato in cui ha scelto una determinata azione, la ricompensa ricevuta e lo stato di arrivo. L'insieme delle esperienze è $D$, ed esso accumula esperienze di molteplici episodi fino a un determinato numero $N$ (l'esperimento originario ne accumula un milione). Ogni volta che un \textit{minibatch} fornisce una nuova quantità di esperienze, ne vengono raccolte altrettante nell'insieme $D$ e vengono aggiornate con quelle nuove. In breve, seguono alcuni vantaggi nell'utilizzo dell'ER:
 		\begin{itemize}
@@ -202,7 +204,7 @@
 			\item \texttt{nn}, libreria potente per fornire un metodo facile e modulare per costruire e allenare reti neurali (molto simile a \texttt{Keras} con i suoi modelli sequenziali).
 		\end{itemize}
 	
-		È possibile allenare il proprio agente usando le proprie \texttt{CPU} o \texttt{GPU} (o una in particolare) tramite i relativi script. Ogni script contiene i seguenti iperparametri (parametri che servono prima del lancio): passi da eseguire, ogni quanti passi eseguire la validazione, valore iniziale di $\gamma$ ed $\epsilon$, learning rate ed altri parzialmente riportati nella Figura \ref{code:run}. L'implementazione in \texttt{LUA} è abbastanza corposa quindi verranno ora riportate le parti ritenuti fondamentali.
+		È possibile allenare il proprio agente usando le proprie \texttt{CPU} o \texttt{GPU} (o una in particolare) tramite i relativi script. Ogni script contiene i seguenti iperparametri (parametri che servono prima del lancio): passi da eseguire, ogni quanti passi eseguire la validazione, valore iniziale di $\gamma$ ed $\epsilon$, learning rate ed altri parzialmente riportati nella Figura \ref{code:run}. L'implementazione in \texttt{LUA} è abbastanza corposa quindi verranno ora riportate le parti ritenute fondamentali.
 		\begin{figure*}[ht!]
 			\centering
 			\caption{Parte dello script di lancio \texttt{run\_cpu}}
@@ -236,7 +238,7 @@
 				\item vengono inizializzati i parametri che regolano il comportamento \textbf{exploration vs. exploitation} (cioè $\epsilon$ e relativi parametri di raffreddamento durante il processo di apprendimento)
 				\item inizializzazione e raffreddamento del \textit{learning rate} (visto in \ref{par:lr});
 				\item il così detto \texttt{discount factor}, che in realtà è il valore $\gamma$ visto in \ref{par:gamma};
-				\item istanziazione della classe \texttt{TransitionTable}, che in realtà l'implementazione dell'insieme $D$ contenente le esperienze, visto in \ref{par:reward};
+				\item istanziazione della classe \texttt{TransitionTable}, che è in realtà l'implementazione dell'insieme $D$ contenente le esperienze, visto in \ref{par:reward};
 				\begin{verbatim}
 					self.transitions = 
 					         dqn.TransitionTable(args)
@@ -266,7 +268,7 @@
 					perceive(reward, rawstate, terminal
 					         testing, testing_ep)
 				\end{verbatim}
-					Il metodo \texttt{perceive(args)} esprime la principale iterazione e quindi viene riportato nella Figura 
+					Il metodo \texttt{perceive(args)} esprime la principale iterazione e quindi viene riportato nella Figura \ref{code:nql};
 				\item
 				\begin{verbatim}
 					eGreedy(state, testing_ep)
@@ -287,14 +289,14 @@
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[scale=.5]{images/cnn.jpeg}
+	\includegraphics[scale=.6]{images/cnn.jpeg}
 	\caption{Neuroni di una CNN}
 	\label{fig:cnn}
 \end{figure*}
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[scale=.5]{images/hlayer.jpeg}
+	\includegraphics[scale=.8]{images/hlayer.jpeg}
 	\caption{Local receptive fields}
 	\label{fig:hlayer}
 \end{figure*}
@@ -333,28 +335,28 @@ La capacità di una CNN può variare in base al numero di strati che essa possie
 
 \begin{figure*}[h]
 	\centering
-	\includegraphics[scale=.2]{images/cnnDQN.jpg}
-	\caption{Illustrazione schematica della rete neurale convoluzionale.}
+	\includegraphics[scale=.33]{images/cnnDQN.jpg}
+	\caption{Architettura della rete neurale deep usata.}
 	\label{fig:cnnDQN}
 \end{figure*}
 
 \begin{figure*}[ht!]
 	\centering
-	\lstinputlisting[]{code/fcl.py}
-	\caption{Implementazione dei layer convoluzionali}
+	\lstinputlisting[language={[5.0]Lua}]{code/fcl.lua}
+	\caption{Parte della creazione del modello sequenziale, che riporta l'aggiunta degli strati convoluzionali tramite la potente libreria \texttt{nn} per \texttt{LUA}}
 	\label{fig:layerConv}
 \end{figure*}
 
 \begin{figure*}[ht!]
 	\centering
-	\lstinputlisting[]{code/lfcl.py}
+	\lstinputlisting[language={[5.0]Lua}]{code/lfcl.lua}
 	\caption{Implementazione del layer FC}
 	\label{fig:layerFC}
 \end{figure*}
 
 \subsection{CNN nel contesto DQN}
 \subsubsection{Preprocessing}\label{subsubsec:preproc}
-Dopo aver descritto in maniera dettagliata la struttura di una CNN è doveroso delineare il modo in cui l l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore Atari 2600.
+Dopo aver discusso la struttura di una CNN è doveroso delineare il modo in cui l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore Atari 2600.
 Per codificare un singolo frame, viene tenuto il valore massimo di colore per ogni pixel tra il frame da codificare con quello precedente. Ciò permette di rimuovere il cosiddetto \textit{flickering} presente nei giochi Atari, in cui alcuni oggetti appaiono solo in frame pari mentre altri appaiono solo in frame dispari; un artefatto causato dal numero limitato di "folletti" presenti nei giochi Atari che l'emulatore però visualizza contemporaneamente. Fatto questo, viene poi estratto il canale Y, conosciuto come luminanza, dal frame RGB e viene scalato ad una dimensione di 84 x 84.
 
 \subsubsection{Architettura del modello}
@@ -372,7 +374,7 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 	Secondo alcuni criteri gli autori hanno anche stabilito prestazioni sotto o sopra al livello umano. Purtroppo, mentre per circa la metà dei giochi l'agente supera le prestazioni umane in maniera impressionante, ci sono $20$ giochi su $49$ in cui l'agente non riesce a fare meglio. Si vuole provare a individuare il fattore che rende diverse (nei risultati) queste due categorie di giochi, il sospetto è che per come è stato progettato l'algoritmo DQN, esso capti ricompense di alcuni giochi in un modo che non gli permette di imparare comportamenti ottimali.
 	
 	\subsection{Alcune prove}
-		Pur non disponendo neanche lontanamente delle risorse di calcolo a disposizione di \textit{DeepMind}, l'\textbf{intenzione} iniziale era quella di accompagnare lo studio dei risultati non soddisfacenti con alcune prove pratiche, per capire meglio l'ambiente di cui stiamo parlando. Sono state fatte alcune prove su due giochi selezionati da diverse categorie: \textit{Breakout} e \textit{Centipede}. Il primo supera il miglior giocatore umano in maniera che si può definire fuori scala, di ben $1327\%$, mentre il secondo non ha raggiunto risultati soddisfacenti, fermandosi al $62\%$.
+		Pur non disponendo neanche lontanamente delle risorse di calcolo a disposizione di \textit{DeepMind}, l'\textbf{intenzione} iniziale era quella di accompagnare lo studio dei risultati non soddisfacenti con alcune prove pratiche, per capire meglio l'ambiente di cui stiamo parlando. Sono state fatte alcune prove su due giochi selezionati da diverse categorie: \textit{Breakout} e \textit{Centipede}. Nell'articolo originale, il primo supera il miglior giocatore umano in maniera che si può definire fuori scala, di ben $1327\%$, mentre il secondo non ha raggiunto risultati soddisfacenti, fermandosi al $62\%$.
 		
 		Gli step totali eseguiti da \textit{DeepMind} sono $50mln$, che su un PC normale equivale ad aspettare in termini di settimane (o poco più di un mese). In un primo tentativo volevamo vedere cosa succede allenando la rete per soli $700.000$ step, scoprendo che circa $12$ ore ($24$ in totale sia per \textit{Centipede} che \textit{Breakout}) non bastano neanche lontanamente per far emergere qualche comportamento sensato da parte dell'agente. Il punteggio di \textit{Breakout} era di soli $55$ punti (con l'agente sempre fermo alla sinistra dello schermo con qualche tremolio verso destra) mentre la rete allenata per \textit{Centipede} accumulava soli $1811$ punti. In un secondo tentativo di $1,25mln$ di step, ipotizzando che il riempimento della \texttt{TransitionTable} migliorasse in qualche modo la situazione, per solo \textit{Centipede} è stato raggiunto il non molto brillante punteggio di $1911$.
 		
@@ -401,10 +403,10 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 		
 		Almeno per quanto riguarda la singola chiave, si potrebbe ragionare sui valori di $\gamma$; si potrebbe rivedere la velocità di raffreddamento di $\epsilon$ per incentivare ulteriormente l'esplorazione; e si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
 		
-		Avremmo voluto poter verificare in maniera immediata gli effetti di piccole modifiche sul comportamento dell'agente ma, pur ammettendo di avere capacità di calcolo minimamente paragonabili a quelle a disposizione di \textit{DeepMind}, servirebbero comunque giorni di allenamento per vederne gli esiti.
+		Avremmo voluto poter verificare in maniera immediata gli effetti di piccole modifiche sul comportamento dell'agente ma, pur ammettendo di avere capacità di calcolo minimamente paragonabili a quelle a disposizione di \textit{DeepMind}, servirebbero comunque settimane di allenamento per vederne gli esiti.
 
 	\subsection{Scelte di carattere tattico}
-		Ci risulta che un'altro punto debole dell'algoritmo proposto da \textit{DeepMind} sia il \textit{fiuto tattico}, che percepiamo come l'abilità di intuire la possibilità di uno scenario sfavorevole e reagire di conseguenza. Non c'è un meccanismo in grado incoraggiare tale comportamento, è vero che l'agente viene punito se va contro il fantasma, ma questi cambiano spesso direzione e (casualmente o no) creano delle zone trappola. Per esempio, si osservi la Figura \ref{fig:subpacman}: una sfavorevole situazione evitabile da prima facendo azioni migliori. Purtroppo, anche in questo caso l'agente DQN otterrebbe tutte le ricompense che gli spettano, senza una previsione iniziale della direzione del fantasma. Un essere umano rimane più bravo a indirizzare \textit{Pac-Man} in una parte del labirinto in cui non ci sono punti da guadagnare, per poi tornare nella parte interessante del labirinto sotto una condizione più favorevole (Figura \ref{fig:subpacman1}).
+		Ci risulta che un'altro punto debole dell'algoritmo proposto da \textit{DeepMind} sia il \textit{fiuto tattico}, che percepiamo come l'abilità di intuire la possibilità di uno scenario sfavorevole e reagire di conseguenza. Non c'è un meccanismo in grado incoraggiare tale comportamento, per quanto riguarda \textit{Pac-Man} è vero che l'agente viene punito se va contro il fantasma, ma questi cambiano spesso direzione e (casualmente o no) creano delle zone trappola. Per esempio, si osservi la Figura \ref{fig:subpacman}: una sfavorevole situazione evitabile da prima facendo azioni migliori. Purtroppo, anche in questo caso l'agente DQN otterrebbe tutte le ricompense che gli spettano, senza una previsione iniziale della direzione del fantasma. Un essere umano rimane più bravo a indirizzare \textit{Pac-Man} in una parte del labirinto in cui non ci sono punti da guadagnare, per poi tornare nella parte interessante del labirinto sotto una condizione più favorevole (Figura \ref{fig:subpacman1}).
 		
 		\begin{figure}[ht!]
 			\centering
@@ -437,6 +439,27 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni ottime in alcuni giochi, è perché non sono "semplici" quanto \textit{Breakout} e simili sparatutto (\textit{Space Invader, Deamon Attack}), dove bisogna andare a destra e a sinistra nel momento giusto; si intendono anche i giochi come \textit{Robotank} che sembrano diversi e addirittura in 3D, dove in realtà si tratta sempre di mirare verso destra o sinistra e sparare al momento giusto.
 		
 		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura \ref{fig:centipede}), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.
+		\begin{table}[]
+			\centering
+			\caption{Esempio di sistema di ricompense in un gioco \textit{Atari 2600}: Centipede. Rispetto ad altri giochi è piuttosto esteso, il suo mapping a $-1$ o $1$ porta troppe semplificazioni, soprattutto se si prende in considerazione il momento in cui vengono date.}
+			\label{tab:rew-cent}
+			\begin{tabular}{l|r}
+				\multicolumn{1}{c|}{Tipo}                                                                         & \multicolumn{1}{c}{\begin{tabular}[c]{@{}c@{}}Quantità\\ Punti\end{tabular}} \\ \hline
+				Centipede parte del corpo                                                                         & 10                                                                           \\ \hline
+				Centipede testa                                                                                   & 100                                                                          \\ \hline
+				Ragno (lunga distanza)                                                                            & 300                                                                          \\ \hline
+				Ragno (media distanza)                                                                            & 600                                                                          \\ \hline
+				Ragno (stretta prossimità)                                                                        & 900                                                                          \\ \hline
+				Pulce                                                                                             & 200                                                                          \\ \hline
+				Scorpione                                                                                         & 1000                                                                         \\ \hline
+				Funghi eliminati                                                                                  & 1                                                                            \\ \hline
+				\begin{tabular}[c]{@{}l@{}}2 Funghi\\ (danneggiati o intatti\\ alla fine)\end{tabular}            & 5                                                                            \\ \hline
+				\begin{tabular}[c]{@{}l@{}}Funghi avvelenati\\ eliminati\end{tabular}                             & 1                                                                            \\ \hline
+				\begin{tabular}[c]{@{}l@{}}2 Funghi avvelenati\\ (danneggiati o intatti\\ alla fine)\end{tabular} & 5                                                                            \\ \hline
+				Nuova Bacchetta Magica                                                                            & 10.000                                                                      
+			\end{tabular}
+		\end{table}
+		
 		\begin{figure}[t]
 			\centering
 			\includegraphics[scale=.5]{images/centipede1.png}
@@ -448,7 +471,7 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 \section{Evoluzione dell'ambito RL}\label{sec:evoalg}
 	La pubblicazione dell'algoritmo DQN proposto in \cite{bib:dqn} risale al $2015$, la sua implementazione molto probabilmente ancora prima (dovrebbe essere $2014$). In ambito \textit{Machine Learning} significa che in realtà è un algoritmo vecchio: da allora non solo sono state proposte modifiche del DQN ma anche alternative. La ricerca di \textit{DeepMind} stessa si è spostata su altri metodi.	Si andrà ora a vedere brevemente, senza entrare troppo nel merito, le modifiche apportate al DQN in diversi articoli.
 	
-	La stessa \textit{DeepMind} se ne accorse in un secondo momento che DQN sovrastima in molti casi alcuni valori di Q (cioè il valore delle azioni da eseguire). È chiaro che questo introduce errori che possono sviare l'agente dall'apprendimento di un comportamento tendende all'ideale. Gli autori della \textit{Double DQN} \cite{bib:ddqn} hanno proposero quindi il seguente principio: anziché prendere il massimo valore di Q per ogni step viene prima usata una rete deep per scegliere l'azione, poi una seconda per generare il valore Q di tale azione. In pratica è stato diviso la scelta di $a$ dalla generazioni dei valori di Q, e questo ha permesso la riduzione della sovrastima. Come si può vedere in \cite{bib:ddqn}, l'algoritmo DDQN ha migliorato parecchio i risultati ottenuti, ma solo nei giochi in cui aveva già ottenuto buoni score. Persistono ancora i problemi trattati in \ref{sec:no}. 
+	La stessa \textit{DeepMind} se ne accorse in un secondo momento che DQN sovrastima in molti casi alcuni valori di Q (cioè il valore delle azioni da eseguire). È chiaro che questo introduce errori che possono sviare l'agente dall'apprendimento di un comportamento tendende all'ideale. Gli autori della \textit{Double DQN} \cite{bib:ddqn} hanno proposero quindi il seguente principio: anziché prendere il massimo valore di Q per ogni step viene prima usata una rete deep per scegliere l'azione, poi una seconda per generare il valore Q di tale azione. In pratica è stato divisa la scelta di $a$ dalla generazioni dei valori di Q, e questo ha permesso la riduzione della sovrastima. Come si può vedere in \cite{bib:ddqn}, l'algoritmo DDQN ha migliorato parecchio i risultati ottenuti, ma solo nei giochi in cui aveva già ottenuto buoni score. Persistono ancora i problemi trattati in \ref{sec:no}. 
 	
 	Sono state proposte modifiche all'\textit{Experience Replay} in \cite{bib:per}, dove viene suggerito che non tutte le transizioni sono uguali. La tecnica \texttt{Prioritized Replay} prevede che vengano campionate con precedenza le esperienze in base a diversi criteri. Uno di questi, è guardare con più attenzione le transizioni che hanno introdotto un errore maggiore sui valori di Q, e ciò significa che portano con sè più informazione. Tale tecnica introduce migliorie per $41$ giochi sui $49$ presenti in \cite{bib:dqn}. Sono state proposte (anche se, senza test esaustivi su tutti i giochi) particolare tecniche per il raffreddamento di $\epsilon$; sempre da \textit{DeepMind} è stato proposto un algoritmo in grado di apprendere in ambienti con controlli continui \cite{bib:con}.
 
@@ -458,7 +481,7 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 		\item \textbf{Actor Critic}, combinazione di entrambi i metodi \textit{Policy Gradient} e \textit{Q\texttwelveudash Learning}, ovvero la valutazione di quanto sia bello trovarsi in un certo stato e una distribuzione di probabilità sull'insieme delle azioni, entrambe le cose implementate come strati densamente connessi sopra l'architettura generale;
 		\item \textbf{Advantage}, si è in grado di generare un stima del \textit{vantaggio}, che permette all'algoritmo di migliorarsi là dove le previsioni della rete corrispondono meno al vero.
 	\end{itemize}
-	L'algoritmo è stato utilizzato per apprendere il gioco al primo \textit{Doom}.
+	L'algoritmo è stato utilizzato per apprendere il gioco al primo \textit{Doom}. A3C stesso ha parecchie versioni e modifiche, incluso l'utilizzo di reti deep ricorsive, e viene spesso usato per migliorare ulteriormente i risultati in vari ambienti\footnote{Open AI Gym, \emph{\href{https://gym.openai.com/envs\#atari}{Atari Environment.}}}. Ad ogni modo, mentre si possono trovare algoritmi che apportano miglioramenti all'apprendimento in giochi come \textit{Pac-Man}, rispetto al DQN, non ci risulta che esistano algoritmi in grado di stravolgere gli esiti all'interno di \textit{Montezuma's Revenge}.
 
 	\section{Conclusioni}
 		Per riuscire ad argomentare nel miglior modo possibile i risultati poco soddisfacenti di un sottoinsieme del parco titoli \textit{Atari 2600}, è stato prima studiato l'algoritmo \textit{Q\texttwelveudash Learning}, poi sono state individuate le aggiunte fatte da \textit{DeepMind} per la realizzazione dell'algoritmo \textit{Deep Q\texttwelveudash Network}. Dopo aver appurato in che modo è stata realizzata la relativa implementazione in \texttt{LUA}, è stato analizzato il contributo delle reti neurali convoluzionali. Per aggiungere valore all'esperienza, era nel nostro intento riuscire ad allenare per davvero degli agenti DQN, ma dopo alcune prove è stato scoperto che per un processo di apprendimento un minimo soddisfacente servono capacità di calcolo non indifferenti e tempo di calcolo non minore di una settimana. Alcuni risultati (seppure non soddisfacenti) sono comunque stati riportati.

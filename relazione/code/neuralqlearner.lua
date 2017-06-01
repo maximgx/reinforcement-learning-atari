@@ -1,5 +1,5 @@
 function nql:perceive(reward, rawstate, terminal, testing, testing_ep)
-    -- Preprocess state (will be set to nil if terminal)
+    --[[ Pre-elaborazione dello stato (sara' null se il gioco e' terminato) ]]
     local state = self:preprocess(rawstate):float()
     local curState
 

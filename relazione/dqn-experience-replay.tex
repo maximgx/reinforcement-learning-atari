@@ -290,7 +290,7 @@
 \begin{figure*}[h]
 	\centering
 	\includegraphics[scale=.6]{images/cnn.jpeg}
-	\caption{Neuroni di una CNN}
+	\caption{Convolutional Neural Network}
 	\label{fig:cnn}
 \end{figure*}
 
@@ -331,7 +331,7 @@ Da un certo punto di vista, possiamo dire che una rete CNN, per la classificazio
 	\textbf{Componente di classificazione}.
 \end{itemize}
 L’addestramento di una CNN coinvolge entrambe le componenti in cui i parametri degli elementi costitutivi (p.e. neuroni) sono automaticamente variati al fine di minimizzare una funzione di costo.
-La capacità di una CNN può variare in base al numero di strati che essa possiede. Raramente si può trovare un solo strato convoluzionale, a meno che la rete in questione non sia estremamente semplice. Di solito una CNN possiede una serie di strati convoluzionali: i primi di questi, partendo dallo strato di ingresso ed andando verso lo strato di uscita, servono per ottenere feature di basso livello, come ad esempio linee orizzontali o verticali, angoli, contorni vari, ecc; più si scende nella rete, andando verso lo strato di uscita, e più le feature diventano di alto livello, ovvero esse rappresentano figure anche piuttosto complesse come dei volti, degli oggetti specifici, una scena, ecc. In sostanza dunque più strati convoluzionali possiede una rete e più feature dettagliate essa riesce ad 
+La capacità di una CNN può variare in base al numero di strati che essa possiede. Raramente si può trovare un solo strato convoluzionale, a meno che la rete in questione non sia estremamente semplice. Di solito una CNN possiede una serie di strati convoluzionali: i primi di questi, partendo dallo strato di ingresso ed andando verso lo strato di uscita, servono per ottenere feature di basso livello, come ad esempio linee orizzontali o verticali, angoli, contorni vari, ecc; più si scende nella rete, andando verso lo strato di uscita, e più le feature diventano di alto livello, ovvero esse rappresentano figure anche piuttosto complesse come dei volti, degli oggetti specifici, una scena, ecc. In sostanza dunque più strati convoluzionali possiede una rete e più feature dettagliate essa riesce a riconoscere. 
 
 \begin{figure*}[h]
 	\centering
@@ -356,8 +356,8 @@ La capacità di una CNN può variare in base al numero di strati che essa possie
 
 \subsection{CNN nel contesto DQN}
 \subsubsection{Preprocessing}\label{subsubsec:preproc}
-Dopo aver discusso la struttura di una CNN è doveroso delineare il modo in cui l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore Atari 2600.
-Per codificare un singolo frame, viene tenuto il valore massimo di colore per ogni pixel tra il frame da codificare con quello precedente. Ciò permette di rimuovere il cosiddetto \textit{flickering} presente nei giochi Atari, in cui alcuni oggetti appaiono solo in frame pari mentre altri appaiono solo in frame dispari; un artefatto causato dal numero limitato di "folletti" presenti nei giochi Atari che l'emulatore però visualizza contemporaneamente. Fatto questo, viene poi estratto il canale Y, conosciuto come luminanza, dal frame RGB e viene scalato ad una dimensione di 84 x 84.
+Dopo aver discusso la struttura di una CNN è doveroso delineare il modo in cui l'agente DQN fa uso di questa rete. Prima di imputare i dati nella CNN, viene eseguito un metodo di \textit{preprocessing} con l'obiettivo di ridurre la dimensione dell'immagine di input. Dovendo elaborare ogni frame del gioco, dove ogni pixel ha una dimensione di 210 x 160 con una paletta di 128 colori, diventa molto dispendioso in termini di calcolo e requisiti di memoria. Quindi si applica un passo di \textit{preprocessing} di base volto a ridurre la dimensionalità di input e affrontare alcuni artefatti dell'emulatore \textit{Atari 2600}.
+Per codificare un singolo frame, viene tenuto il valore massimo di colore per ogni pixel tra il frame da codificare con quello precedente. Ciò permette di rimuovere il cosiddetto \textit{flickering} presente nei giochi Atari, in cui alcuni oggetti appaiono solo in frame pari mentre altri appaiono solo in frame dispari; un artefatto causato dal numero limitato di "nemici" presenti nei giochi Atari che l'emulatore però visualizza contemporaneamente. Fatto questo, viene poi estratto il canale Y, conosciuto come luminanza, dal frame RGB e viene scalato ad una dimensione di 84 x 84.
 
 \subsubsection{Architettura del modello}
 L'architettura schematizzata della rete è mostrata in figura \ref{fig:cnnDQN} ed è strutturata come segue. 

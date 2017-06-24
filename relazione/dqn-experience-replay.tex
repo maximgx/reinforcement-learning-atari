@@ -399,11 +399,11 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 			\caption{L'eroe deve arrivare alla chiave eseguendo molteplici azioni ed evitando il teschio.}
 			\label{fig:montezuma}
 		\end{figure}
-		Inoltre, per giocare è necessario muoversi contemporanemante su più livelli, logicamente collegati. Non vediamo alcun meccanismo in grado di gestire scelte del genere.
+		Inoltre, per giocare è necessario muoversi contemporanemante su più livelli, logicamente collegati. Non vediamo alcun meccanismo in grado di gestire scelte del genere. Almeno per quanto riguarda la singola chiave, si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
 		
-		Almeno per quanto riguarda la singola chiave, si potrebbe ragionare sui valori di $\gamma$; si potrebbe rivedere la velocità di raffreddamento di $\epsilon$ per incentivare ulteriormente l'esplorazione; e si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
+		% Almeno per quanto riguarda la singola chiave, si potrebbe ragionare sui valori di $\gamma$; si potrebbe rivedere la velocità di raffreddamento di $\epsilon$ per incentivare ulteriormente l'esplorazione; e si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
 		
-		Avremmo voluto poter verificare in maniera immediata gli effetti di piccole modifiche sul comportamento dell'agente ma, pur ammettendo di avere capacità di calcolo minimamente paragonabili a quelle a disposizione di \textit{DeepMind}, servirebbero comunque settimane di allenamento per vederne gli esiti.
+		% Avremmo voluto poter verificare in maniera immediata gli effetti di piccole modifiche sul comportamento dell'agente ma, pur ammettendo di avere capacità di calcolo minimamente paragonabili a quelle a disposizione di \textit{DeepMind}, servirebbero comunque settimane di allenamento per vederne gli esiti.
 
 	\subsection{Scelte di carattere tattico}
 		Ci risulta che un'altro punto debole dell'algoritmo proposto da \textit{DeepMind} sia il \textit{fiuto tattico}, che percepiamo come l'abilità di intuire la possibilità di uno scenario sfavorevole e reagire di conseguenza. Non c'è un meccanismo in grado incoraggiare tale comportamento, per quanto riguarda \textit{Pac-Man} è vero che l'agente viene punito se va contro il fantasma, ma questi cambiano spesso direzione e (casualmente o no) creano delle zone trappola. Per esempio, si osservi la Figura \ref{fig:subpacman}: una sfavorevole situazione evitabile da prima facendo azioni migliori. Purtroppo, anche in questo caso l'agente DQN otterrebbe tutte le ricompense che gli spettano, senza una previsione iniziale della direzione del fantasma. Un essere umano rimane più bravo a indirizzare \textit{Pac-Man} in una parte del labirinto in cui non ci sono punti da guadagnare, per poi tornare nella parte interessante del labirinto sotto una condizione più favorevole (Figura \ref{fig:subpacman1}).
@@ -430,43 +430,62 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 		\begin{figure*}[h]
 			\centering
 			\includegraphics[scale=.65]{images/breakout.png}
-			\caption{Dopo un considerevole numero di ore di apprendimento l'algoritmo DQN è in grado di individuare situazioni in cui una sola azione porta numerose ricompense.}
+			\caption{Dopo un certo numero di ore di apprendimento l'algoritmo DQN è in grado di individuare situazioni in cui una sola azione porta numerose ricompense.}
 			\label{fig:breakout}
 		\end{figure*} 
 		In un primo momento potrebbe sembrare che questo sia in contrasto con le conclusioni fatte per quato riguarda \textit{Ms. Pac-Man}. Tuttavia, pensiamo che in \textit{Breakout} la valutazione dell'ottimalità della sequenza di azioni non cambi molto a causa di eventi imprevisti. È questione di ambiente: in \textit{Breakout} non ci sono insidie improvvise (o di qualsiasi altro tipo). A parte questo, il gioco di \textit{Breakout} (così come \textit{Pong}) premiano le \textit{skill} di reattività che vengono perfettamente ricompensate in maniera istantanea. \textit{Pac-Man} (così come \textit{Alien}) non è solo questo.
 	
-	\subsection{Giochi difficili}
+	\subsection{Ricompense Ambigue ed elevata Complessità}
 		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni ottime in alcuni giochi, è perché non sono "semplici" quanto \textit{Breakout} e simili sparatutto (\textit{Space Invader, Deamon Attack}), dove bisogna andare a destra e a sinistra nel momento giusto; si intendono anche i giochi come \textit{Robotank} che sembrano diversi e addirittura in 3D, dove in realtà si tratta sempre di mirare verso destra o sinistra e sparare al momento giusto.
 		
-		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura \ref{fig:centipede}), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.
-		\begin{table}[]
-			\centering
-			\caption{Esempio di sistema di ricompense in un gioco \textit{Atari 2600}: Centipede. Rispetto ad altri giochi è piuttosto esteso, il suo mapping a $-1$ o $1$ porta troppe semplificazioni, soprattutto se si prende in considerazione il momento in cui vengono date.}
-			\label{tab:rew-cent}
-			\begin{tabular}{l|r}
-				\multicolumn{1}{c|}{Tipo}                                                                         & \multicolumn{1}{c}{\begin{tabular}[c]{@{}c@{}}Quantità\\ Punti\end{tabular}} \\ \hline
-				Centipede parte del corpo                                                                         & 10                                                                           \\ \hline
-				Centipede testa                                                                                   & 100                                                                          \\ \hline
-				Ragno (lunga distanza)                                                                            & 300                                                                          \\ \hline
-				Ragno (media distanza)                                                                            & 600                                                                          \\ \hline
-				Ragno (stretta prossimità)                                                                        & 900                                                                          \\ \hline
-				Pulce                                                                                             & 200                                                                          \\ \hline
-				Scorpione                                                                                         & 1000                                                                         \\ \hline
-				Funghi eliminati                                                                                  & 1                                                                            \\ \hline
-				\begin{tabular}[c]{@{}l@{}}2 Funghi\\ (danneggiati o intatti\\ alla fine)\end{tabular}            & 5                                                                            \\ \hline
-				\begin{tabular}[c]{@{}l@{}}Funghi avvelenati\\ eliminati\end{tabular}                             & 1                                                                            \\ \hline
-				\begin{tabular}[c]{@{}l@{}}2 Funghi avvelenati\\ (danneggiati o intatti\\ alla fine)\end{tabular} & 5                                                                            \\ \hline
-				Nuova Bacchetta Magica                                                                            & 10.000                                                                      
-			\end{tabular}
-		\end{table}
-		
+		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura \ref{fig:centipede}), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.		
 		\begin{figure}[t]
 			\centering
 			\includegraphics[scale=.5]{images/centipede1.png}
 			\caption{Situazione (neanche delle più difficili) in cui l'elfo si ritrova con pezzi di centipede e altri nemici che si muovono a grande velocità intorno al protagonista.}
 			\label{fig:centipede}
 		\end{figure}
-		In più è stato notato che appena dopo la morte del giocatore (punizione $-1$) il gioco si ferma e assegna una ricompensa $+1$ per ogni fungo (quadratini sullo schermo). Questo potrebbe, come minimo, insegnare all'algoritmo che tutto sommato morire non è poi talmente tragico. Esistono in rete discussioni di appassionati del settore che dopo settimane di allenamento non riuscivano a ottenere un agente DQN in \textit{Centipede} che cercasse di muoversi efficientemente sull'asse verticale per evitare il contatto con i nemici.
+		In più è stato notato che appena dopo la morte del giocatore (punizione $-1$) il gioco si ferma e assegna una ricompensa $+1$ per ogni fungo (quadratini sullo schermo). Questo potrebbe, come minimo, insegnare all'algoritmo che tutto sommato morire non è poi talmente tragico. 
+		% Esistono in rete discussioni di appassionati del settore che dopo settimane di allenamento non riuscivano a ottenere un agente DQN in \textit{Centipede} che cercasse di muoversi efficientemente sull'asse verticale per evitare il contatto con i nemici.
+		
+\section{Sessioni di apprendimento}
+	In questa sezione verranno riportate le esperienze ottenute in seguito a una serie di prove di apprendimento in due giochi: \textit{Breakout} e \textit{Centipede}. Inizialmente si era pensato di fare circa $50$ ore di apprendimento per ognuno dei due giochi, questo significa circa $18$ milioni di step al posto dei $50$ milioni al contrario eseguiti eseguiti da \textit{DeepMind}. Per valutare le prestazioni degli agenti verrà usata la stessa formula \ref{eq:eval} presente in \cite{bib:dqn}.
+	\begin{equation}\label{eq:eval}
+		100(dqn - r)(human - r)
+	\end{equation}
+	Dove $dqn$ sono i punteggi medi dell'agente DQN su più prove, $human$ dell'essere umano, e $r$ i punteggi ottenuti giocando scegliendo azioni casuali. Tutti questi dati sono disponibili, per ogni gioco, sempre in \cite{bib:dqn}, l'unica cosa che verrà cambiata sarà il valore $dqn$, stavolta ottenuto in seguito alle nostre prove.
+	
+	\subsection{\textit{Breakout}}
+%		277
+%		330
+%		399
+%		358
+%		340 MEDIA 340,8 +- 44.36 anziché i 401,2+-26,9
+
+		\subsubsection{Rompere il muro}
+		
+		\subsubsection{Situazione di stallo}
+	
+	\begin{table}[]
+		\centering
+		\caption{Esempio di sistema di ricompense in un gioco \textit{Atari 2600}: Centipede. Rispetto ad altri giochi è piuttosto esteso, il suo mapping a $-1$ o $1$ porta troppe semplificazioni, soprattutto se si prende in considerazione il momento in cui vengono date.}
+		\label{tab:rew-cent}
+		\begin{tabular}{l|r}
+			\multicolumn{1}{c|}{Tipo}                                                                         & \multicolumn{1}{c}{\begin{tabular}[c]{@{}c@{}}Quantità\\ Punti\end{tabular}} \\ \hline
+			Centipede parte del corpo                                                                         & 10                                                                           \\ \hline
+			Centipede testa                                                                                   & 100                                                                          \\ \hline
+			Ragno (lunga distanza)                                                                            & 300                                                                          \\ \hline
+			Ragno (media distanza)                                                                            & 600                                                                          \\ \hline
+			Ragno (stretta prossimità)                                                                        & 900                                                                          \\ \hline
+			Pulce                                                                                             & 200                                                                          \\ \hline
+			Scorpione                                                                                         & 1000                                                                         \\ \hline
+			Funghi eliminati                                                                                  & 1                                                                            \\ \hline
+			\begin{tabular}[c]{@{}l@{}}2 Funghi\\ (danneggiati o intatti\\ alla fine)\end{tabular}            & 5                                                                            \\ \hline
+			\begin{tabular}[c]{@{}l@{}}Funghi avvelenati\\ eliminati\end{tabular}                             & 1                                                                            \\ \hline
+			\begin{tabular}[c]{@{}l@{}}2 Funghi avvelenati\\ (danneggiati o intatti\\ alla fine)\end{tabular} & 5                                                                            \\ \hline
+			Nuova Bacchetta Magica                                                                            & 10.000                                                                      
+		\end{tabular}
+	\end{table}
 
 \section{Evoluzione dell'ambito RL}\label{sec:evoalg}
 	La pubblicazione dell'algoritmo DQN proposto in \cite{bib:dqn} risale al $2015$, la sua implementazione molto probabilmente ancora prima (dovrebbe essere $2014$). In ambito \textit{Machine Learning} significa che in realtà è un algoritmo vecchio: da allora non solo sono state proposte modifiche del DQN ma anche alternative. La ricerca di \textit{DeepMind} stessa si è spostata su altri metodi.	Si andrà ora a vedere brevemente, senza entrare troppo nel merito, le modifiche apportate al DQN in diversi articoli.
@@ -519,3 +538,47 @@ Tom Erez, Yuval Tassa, David Silver and Daan Wierstra
 \end{thebibliography}
 
 \end{document}
+%
+% centipede modificato
+%	182
+%
+% centipede umano	random	dm%		my%
+%   622		11693	2091	63		100*(622-2091)/(8309-2091) = -23,62%
+%
+% breakout	umano	random	dm%		my%
+%   277		31		1,7		1372	100*(277-1.7)/(31-1.7) = 939,59%
+%
+%   622 / 11693 = 5%
+%   			= 787%	157 volte meglio
+% 
+%	700k	1406p
+%   1,15mln	2713p
+%	5,42mln	2215p
+%	7,69mln	1594p // preferisce morire per ottenere reward
+%	9,84mln 1281p
+%	14,6mln	2327p // sale
+%	16,7mln 1714p
+%	17,9mln 1591p // decresce ancora
+%	19,3mln 1556p
+%	24,2mln 1063p
+%	25,5mln 2654p
+%	25,9mln	596p
+%   26,0mln 304p
+%	27,6mln 1000p
+%	28,5mln	878p
+%	32,2mln 664p
+%   32,6mln 999p
+%	33,2mln 541p
+%	33,9mln 1212p
+%	34,2mln 1715p
+%	34,8mln 1381p
+%	38,5mln 1514p
+%	39,0mln 1415p da qui va la media
+%	40,0mln 2079p medio (4598!)
+%	44,0mln 2091p medio (4648!)
+%
+%
+%
+%
+
+

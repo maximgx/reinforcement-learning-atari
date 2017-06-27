@@ -368,17 +368,17 @@ Il secondo strato nascosto convoglia 64 filtri di dimensione 4 x 4 con passo 2 s
 Dopo aver descritto l'architettura della CNN utilizzata per questo studio, analizzeremo l'implementazione della struttura. Come accennato in precedenza, il tutto è stato sviluppato in \textit{Lua} con riferimenti a librerie di IA, ma per lo sviluppo della CNN è indispensabile la libreria \textit{Torch}, un framework scientifico di calcolo con ampio supporto per gli algoritmi di machine learning che predilige le GPU. In figura \ref{fig:layerConv} viene mostrata la parte di codice della funzione \textit{create\_network(args)} che implementa i layer convoluzionali con diversi parametri come descritto nella sezione precedente.
 L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli strati FC, dove vengono collegati tutti i neuroni di uscita, con la funzione principale di effettuare una sorta di raggruppamento delle informazioni ottenute fino a quel momento esprimendole con un singolo numero (l’attivazione di uno dei suoi neuroni), ovvero, l'azione da compiere.
 
-\section{Game Over}\label{}
-	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.
-	
-	Secondo alcuni criteri gli autori hanno anche stabilito prestazioni sotto o sopra al livello umano. Purtroppo, mentre per circa la metà dei giochi l'agente supera le prestazioni umane in maniera impressionante, ci sono $20$ giochi su $49$ in cui l'agente non riesce a fare meglio. Si vuole provare a individuare il fattore che rende diverse (nei risultati) queste due categorie di giochi, il sospetto è che per come è stato progettato l'algoritmo DQN, esso capti ricompense di alcuni giochi in un modo che non gli permette di imparare comportamenti ottimali.
-	
-	\subsection{Alcune prove}
-		Pur non disponendo neanche lontanamente delle risorse di calcolo a disposizione di \textit{DeepMind}, l'\textbf{intenzione} iniziale era quella di accompagnare lo studio dei risultati non soddisfacenti con alcune prove pratiche, per capire meglio l'ambiente di cui stiamo parlando. Sono state fatte alcune prove su due giochi selezionati da diverse categorie: \textit{Breakout} e \textit{Centipede}. Nell'articolo originale, il primo supera il miglior giocatore umano in maniera che si può definire fuori scala, di ben $1327\%$, mentre il secondo non ha raggiunto risultati soddisfacenti, fermandosi al $62\%$.
-		
-		Gli step totali eseguiti da \textit{DeepMind} sono $50mln$, che su un PC normale equivale ad aspettare in termini di settimane (o poco più di un mese). In un primo tentativo volevamo vedere cosa sarebbe accaduto allenando la rete per soli $700.000$ step, scoprendo che circa $12$ ore ($24$ in totale sia per \textit{Centipede} che \textit{Breakout}) non bastano neanche lontanamente per far emergere qualche comportamento sensato da parte dell'agente. Il punteggio di \textit{Breakout} era di soli $55$ punti (con l'agente sempre fermo alla sinistra dello schermo con qualche tremolio verso destra) mentre la rete allenata per \textit{Centipede} accumulava soli $1811$ punti. In un secondo tentativo di $1,25mln$ di step, ipotizzando che il riempimento della \texttt{TransitionTable} migliorasse in qualche modo la situazione, per solo \textit{Centipede} è stato raggiunto il non molto brillante punteggio di $1911$.
-		
-		È chiaro che per computazioni del genere in maniera efficiente non basta il computer di casa. Bisogna specificare però che è stata usata la \texttt{CPU} che è un \texttt{i5 4690K}, dato che dopo aver provato due versioni di \texttt{Ubuntu} non risultava essere alcun driver \texttt{CUDA GTX980} compatibile al giorno d'oggi anche con l'implementazione del DQN. Per quanto riguarda il lato pratico quindi, è tutto quello che è stato possibile realizzare.
+%\section{Game Over}\label{}
+%	L'allenamento dell'agente DQN, spiegato nelle sezioni precedenti e con la stessa struttura della rete, è stato eseguito su $49$ giochi \textit{retro} della console \textit{Atari 2600}. In \cite{bib:dqn} si possono vedere i risultati di tali esperimenti. Quello che sorprende di più è che sono stati raggiunti ottimi risultati per una serie di giochi che in termine di genere hanno poco in comune: si va dagli sparatutto come \textit{River Raid}, passando per \textit{Boxing} e infine i giochi di guida tredimensionali come \textit{Enduro}.
+%	
+%	Secondo alcuni criteri gli autori hanno anche stabilito prestazioni sotto o sopra al livello umano. Purtroppo, mentre per circa la metà dei giochi l'agente supera le prestazioni umane in maniera impressionante, ci sono $20$ giochi su $49$ in cui l'agente non riesce a fare meglio. Si vuole provare a individuare il fattore che rende diverse (nei risultati) queste due categorie di giochi, il sospetto è che per come è stato progettato l'algoritmo DQN, esso capti ricompense di alcuni giochi in un modo che non gli permette di imparare comportamenti ottimali.
+%	
+%	\subsection{Alcune prove}
+%		Pur non disponendo neanche lontanamente delle risorse di calcolo a disposizione di \textit{DeepMind}, l'\textbf{intenzione} iniziale era quella di accompagnare lo studio dei risultati non soddisfacenti con alcune prove pratiche, per capire meglio l'ambiente di cui stiamo parlando. Sono state fatte alcune prove su due giochi selezionati da diverse categorie: \textit{Breakout} e \textit{Centipede}. Nell'articolo originale, il primo supera il miglior giocatore umano in maniera che si può definire fuori scala, di ben $1327\%$, mentre il secondo non ha raggiunto risultati soddisfacenti, fermandosi al $62\%$.
+%		
+%		Gli step totali eseguiti da \textit{DeepMind} sono $50mln$, che su un PC normale equivale ad aspettare in termini di settimane (o poco più di un mese). In un primo tentativo volevamo vedere cosa sarebbe accaduto allenando la rete per soli $700.000$ step, scoprendo che circa $12$ ore ($24$ in totale sia per \textit{Centipede} che \textit{Breakout}) non bastano neanche lontanamente per far emergere qualche comportamento sensato da parte dell'agente. Il punteggio di \textit{Breakout} era di soli $55$ punti (con l'agente sempre fermo alla sinistra dello schermo con qualche tremolio verso destra) mentre la rete allenata per \textit{Centipede} accumulava soli $1811$ punti. In un secondo tentativo di $1,25mln$ di step, ipotizzando che il riempimento della \texttt{TransitionTable} migliorasse in qualche modo la situazione, per solo \textit{Centipede} è stato raggiunto il non molto brillante punteggio di $1911$.
+%		
+%		È chiaro che per computazioni del genere in maniera efficiente non basta il computer di casa. Bisogna specificare però che è stata usata la \texttt{CPU} che è un \texttt{i5 4690K}, dato che dopo aver provato due versioni di \texttt{Ubuntu} non risultava essere alcun driver \texttt{CUDA GTX980} compatibile al giorno d'oggi anche con l'implementazione del DQN. Per quanto riguarda il lato pratico quindi, è tutto quello che è stato possibile realizzare.
 		
 \section{Prestazioni scadenti: cause individuate}\label{sec:no}
 	Prima di tutto era necessario capire l'intero ramo dell'apprendimento per rinforzo, il QL e infine le DQN, fatto ciò è possibile passare allo studio dei risultati presenti in \cite{bib:dqn}. L'attenzione era inizialmente focalizzata sul risultato di \textit{Centipede}, ma per capire il perché delle sue prestazioni non brillanti era anche necessario fare il confronto con altri giochi. Guardando i \textit{gameplay} della maggior parte del parco titoli, e consultando i relativi manuali per capire la natura delle ricompense (\textit{quante} e \textit{quando})\footnote{Atari Age, \emph{\href{https://atariage.com/software_search.php?SystemID=2600}{Atari 2600 Rarity Guide.}}} in relazione alle possibili osservazioni, è risultato chiaro che alcuni giochi in realtà si assomigliano molto per costruzione. Si stava cercando un pattern che distinguesse i giochi in cui l'algoritmo si comportasse bene o male, ma sono stati individuati almeno tre motivi per cui un agente DQN può risultare sotto le prestazioni umane. È necessario ricordare prima di procedere, che la struttura dei giochi non è stata cambiata in alcun modo tranne per il sistema delle ricompense. Qualsiasi ricompensa negativa è stata mappata su $-1$, su $1$ quelle positive e su $0$ quelle nulle. A partire da \cite{bib:dqn} non è chiaro se la fine della partita venga considerata come ricompensa negativa, in seguito ad alcune ricerche nel codice sorgente si nota come in realtà l'agente non venga punito in tal caso:
@@ -435,7 +435,7 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 		\end{figure*} 
 		In un primo momento potrebbe sembrare che questo sia in contrasto con le conclusioni fatte per quato riguarda \textit{Ms. Pac-Man}. Tuttavia, pensiamo che in \textit{Breakout} la valutazione dell'ottimalità della sequenza di azioni non cambi molto a causa di eventi imprevisti. È questione di ambiente: in \textit{Breakout} non ci sono insidie improvvise (o di qualsiasi altro tipo). A parte questo, il gioco di \textit{Breakout} (così come \textit{Pong}) premiano le \textit{skill} di reattività che vengono perfettamente ricompensate in maniera istantanea. \textit{Pac-Man} (così come \textit{Alien}) non è solo questo.
 	
-	\subsection{Ricompense Ambigue ed elevata Complessità}
+	\subsection{Ricompense Ambigue ed elevata Complessità}\label{subsec:suicide}
 		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni ottime in alcuni giochi, è perché non sono "semplici" quanto \textit{Breakout} e simili sparatutto (\textit{Space Invader, Deamon Attack}), dove bisogna andare a destra e a sinistra nel momento giusto; si intendono anche i giochi come \textit{Robotank} che sembrano diversi e addirittura in 3D, dove in realtà si tratta sempre di mirare verso destra o sinistra e sparare al momento giusto.
 		
 		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura \ref{fig:centipede}), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.		
@@ -451,41 +451,155 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 \section{Sessioni di apprendimento}
 	In questa sezione verranno riportate le esperienze ottenute in seguito a una serie di prove di apprendimento in due giochi: \textit{Breakout} e \textit{Centipede}. Inizialmente si era pensato di fare circa $50$ ore di apprendimento per ognuno dei due giochi, questo significa circa $18$ milioni di step al posto dei $50$ milioni al contrario eseguiti eseguiti da \textit{DeepMind}. Per valutare le prestazioni degli agenti verrà usata la stessa formula \ref{eq:eval} presente in \cite{bib:dqn}.
 	\begin{equation}\label{eq:eval}
-		100(dqn - r)(human - r)
+		100(dqn - r)/(human - r)
 	\end{equation}
-	Dove $dqn$ sono i punteggi medi dell'agente DQN su più prove, $human$ dell'essere umano, e $r$ i punteggi ottenuti giocando scegliendo azioni casuali. Tutti questi dati sono disponibili, per ogni gioco, sempre in \cite{bib:dqn}, l'unica cosa che verrà cambiata sarà il valore $dqn$, stavolta ottenuto in seguito alle nostre prove.
+	Dove $dqn$ sono i punteggi medi dell'agente DQN su più prove, $human$ i punteggi dell'essere umano, e $r$ i punteggi ottenuti giocando scegliendo azioni casuali. Tutti questi dati sono disponibili, per ogni gioco, sempre in \cite{bib:dqn}. L'unica cosa che in questa sede cambia è il valore $dqn$, stavolta ottenuto in seguito alle nostre prove.
 	
 	\subsection{\textit{Breakout}}
-%		277
-%		330
-%		399
-%		358
-%		340 MEDIA 340,8 +- 44.36 anziché i 401,2+-26,9
+		Secondo gli autori risulta che dopo $50mln$ di step l'agente supera in \textit{Breakout} l'essere umano di ben $1327,2\%$, ottenendo uno score di $401,2$ punti con una deviazione standard di $26,9$ punti, su un totale di $30$ partite giocate. Il tutto a partire da questi dati:
+		\begin{itemize}
+			\item random score $r = 1,7$;
+			\item human score $human = 31,80$.
+		\end{itemize}
+		
+		In questo progetto la sessione è stata fermata poco dopo i $18mln$ di step. In seguito al campionamento risulta che l'agente allenato ottenga uno score medio di $340,8$ punti con una deviazione standard di $44,36$. Normalizzando il risultato secondo \ref{eq:eval}, si ha che il nostro \textbf{agente supera il giocatore umano di ben $1126,58\%$}. Si deduce quindi che già dopo $18mln$ gran parte dei miglioramenti sono avvenuti, il risultato di \textit{DeepMind} riporta un punteggio medio moderatamente più alto e con una deviazione standard minore.
 
 		\subsubsection{Rompere il muro}
+			Non solo i risultati ottenuti hanno lo stesso carattere. Anche il comportamento \textit{"furbo"} dell'agente (Figura \ref{fig:breakout}), che consiste nella creazione di un buco nella parte sinistra del muro, gettando la palla dietro per farla rimbalzare, è stato ripetuto.
 		
 		\subsubsection{Situazione di stallo}
-	
-	\begin{table}[]
-		\centering
-		\caption{Esempio di sistema di ricompense in un gioco \textit{Atari 2600}: Centipede. Rispetto ad altri giochi è piuttosto esteso, il suo mapping a $-1$ o $1$ porta troppe semplificazioni, soprattutto se si prende in considerazione il momento in cui vengono date.}
-		\label{tab:rew-cent}
-		\begin{tabular}{l|r}
-			\multicolumn{1}{c|}{Tipo}                                                                         & \multicolumn{1}{c}{\begin{tabular}[c]{@{}c@{}}Quantità\\ Punti\end{tabular}} \\ \hline
-			Centipede parte del corpo                                                                         & 10                                                                           \\ \hline
-			Centipede testa                                                                                   & 100                                                                          \\ \hline
-			Ragno (lunga distanza)                                                                            & 300                                                                          \\ \hline
-			Ragno (media distanza)                                                                            & 600                                                                          \\ \hline
-			Ragno (stretta prossimità)                                                                        & 900                                                                          \\ \hline
-			Pulce                                                                                             & 200                                                                          \\ \hline
-			Scorpione                                                                                         & 1000                                                                         \\ \hline
-			Funghi eliminati                                                                                  & 1                                                                            \\ \hline
-			\begin{tabular}[c]{@{}l@{}}2 Funghi\\ (danneggiati o intatti\\ alla fine)\end{tabular}            & 5                                                                            \\ \hline
-			\begin{tabular}[c]{@{}l@{}}Funghi avvelenati\\ eliminati\end{tabular}                             & 1                                                                            \\ \hline
-			\begin{tabular}[c]{@{}l@{}}2 Funghi avvelenati\\ (danneggiati o intatti\\ alla fine)\end{tabular} & 5                                                                            \\ \hline
-			Nuova Bacchetta Magica                                                                            & 10.000                                                                      
-		\end{tabular}
-	\end{table}
+			Un'interessante fenomeno ciclico accade nella fase finale di un buon numero di partite. Quando la scena è sgombra di mattoni l'agente colpisce la palla mandandola nell'angolo del livello, con essa che ritorna sempre alla stessa velocità e con traiettoria simile (Figura \ref{fig:cycle}). Al ritorno la palla viene ripetutamente colpita nello stesso identico modo, facendole rifare gli stessi rimbalzi. Si può notare che l'angolo in questione è sempre quello sinistro, probabilmente l'agente cerca di ripetere il comportamento descritto sopra, in un contesto non più adatto. In certi casi l'agente può continuare questo ciclo anche per interi minuti, senza ottenere alcun punto, fino al momento in cui perde la palla.
+			\begin{figure}[ht!]
+				\centering
+				\begin{subfigure}[b]{.3\textwidth}
+					\centering
+					\includegraphics[scale=1]{images/cycle1.png}
+					%\caption{Situazione sfavorevole, ma ancora riparabile, guidata per la maggiore dalla voglia di ottenere ricompense istantanee.}
+					\label{fig:cycle1}
+				\end{subfigure}
+			
+				\begin{subfigure}[b]{.3\textwidth}
+					\centering
+					\includegraphics[scale=1]{images/cycle2.png}
+					%\caption{Esempio di scelta sensata, quella di andare a raccogliere punti in un'altra porzione della mappa mentre i fantasmi sono impegnati altrove.}
+					\label{fig:cycle2}
+				\end{subfigure}
+				\caption{La palla ritornerà dall'agente, dove sarà colpita e rifarà lo stesso movimento parecchie volte.}
+				\label{fig:cycle}
+			\end{figure}
+		
+	\subsection{Centipede}
+		Per quanto riguarda \textit{Centipede}, in \cite{bib:dqn} \textit{DeepMind} sostiene che il loro agente raggiunga il $63\%$ delle prestazioni umane, normalizzando usando i seguenti valori:
+		\begin{itemize}
+			\item random score $r = 2091$;
+			\item human score $human = 11963$.
+		\end{itemize}
+		Da notare come mentre in \textit{Breakout} muovendosi casualmente si riesce a guadagnare solo $1,7$ punti, in \textit{Centipede} scegliendo azioni casuali è possibile guadagnare in media $2091$ punti, che non è niente.	
+		
+		In questo progetto, inizialmente, anche l'apprendimento di \textit{Centipede} è stato fermato a $18mln$, ma con un esito ben diverso. Il punteggio medio ottenuto dopo $18mln$ è $1173$, il quale, normalizzato secondo \ref{eq:eval}, risulta in un anomalo $-9,3\%$. Questo accade perché tale punteggio è \textbf{minore} delle prestazioni ottenute giocando casualmente. Può esserci solo un modo per avere risultati peggiori del gioco casuale: farlo di proposito. 
+		
+		\subsubsection{Ambiente ingannevole}
+			La prima intuizione è che, come si diceva in \ref{subsec:suicide}, l'agente impara a suicidarsi dato che appena dopo, l'ambiente di \textit{Centipede} premia il giocatore per ogni singolo fungo (quadrato) presente sullo schermo. Al lancio della partita usando la relativa rete è visibile come il protagonista vada palesemente contro il \textit{ragno} non appena questo appare sullo schermo. Ma in centipede il modo più veloce per raggiungere punteggi alti è proprio quello di uccidere il $ragno$ che compare quasi sempre. Nella Tabella \ref{tab:rew-cent} è possibile vedere come l'uccisione delle parti del centipede faccia guadagnare relativamente pochi punti, mentre l'uccisione del $ragno$ comporta a un veloce avanzamento dello score.
+			\begin{table}[]
+				\centering
+				\caption{Esempio di sistema di ricompense in un gioco \textit{Atari 2600}: Centipede. Rispetto ad altri giochi è piuttosto esteso, il suo mapping a $-1$ o $1$ porta troppe semplificazioni, soprattutto se si prende in considerazione il momento in cui vengono date.}
+				\label{tab:rew-cent}
+				\begin{tabular}{l|r}
+					\multicolumn{1}{c|}{Tipo}                                                                         & \multicolumn{1}{c}{\begin{tabular}[c]{@{}c@{}}Quantità\\ Punti\end{tabular}} \\ \hline
+					Centipede parte del corpo                                                                         & 10                                                                           \\ \hline
+					Centipede testa                                                                                   & 100                                                                          \\ \hline
+					Ragno (lunga distanza)                                                                            & 300                                                                          \\ \hline
+					Ragno (media distanza)                                                                            & 600                                                                          \\ \hline
+					Ragno (stretta prossimità)                                                                        & 900                                                                          \\ \hline
+					Pulce                                                                                             & 200                                                                          \\ \hline
+					Scorpione                                                                                         & 1000                                                                         \\ \hline
+					Funghi eliminati                                                                                  & 1                                                                            \\ \hline
+					\begin{tabular}[c]{@{}l@{}}2 Funghi\\ (danneggiati o intatti\\ alla fine)\end{tabular}            & 5                                                                            \\ \hline
+					\begin{tabular}[c]{@{}l@{}}Funghi avvelenati\\ eliminati\end{tabular}                             & 1                                                                            \\ \hline
+					\begin{tabular}[c]{@{}l@{}}2 Funghi avvelenati\\ (danneggiati o intatti\\ alla fine)\end{tabular} & 5                                                                
+				\end{tabular}
+			\end{table}
+			Tuttavia, dato che secondo \cite{bib:dqn} il DQN funziona con i reward normalizzati a $1$ per tutti quelli positivi, l'agente non può percepire l'uccisione del $ragno$ come parecchio vantaggiosa. Supponiamo quindi che sullo schermo ci siano 20 mattoni e un centipede fatto di $9$ parti e $1$ testa, che si avvicina. Una volta ucciso il centipede, l'agente con la sua visuale distorta dell'ambiente ha spesso le seguenti due possibilità:
+			\begin{enumerate}
+				\item uccidere anche il ragno appena comparso e guadagnare $11$ punti ($10$ per il centipede appena ucciso e $1$ per il ragno);
+				\item andare a urtare il ragno appena comparso e guadagnare $29$ punti ($20$ per il centipede appena ucciso, $-1$ per aver urtato il ragno e $20$ per ogni mattone).
+			\end{enumerate}
+			Dal suo punto di vista la scelta migliore è spesso ovvia (la seconda), mentre in realtà l'uccisione del ragno porta centinaia di punti score (la prima). Questa visione a breve termine funziona in \textit{Breakout} (sul quale gli autori hanno messo tanta enfasi), ma non in \textit{Centipede}.
+			
+		\subsubsection{Risultati}
+			Rimane comunque il fatto che \textit{DeepMind} afferma di aver ottenuto un agente in grado di fare $8309$ punti con una deviazione standard piuttosto alta di $5237$. Avendo appurato che dopo $18mln$ di step non è possibile replicare tali risultati ne fare un confronto con le ottime prestazione ottenute in \textit{Breakout}, è stata lanciata una nuova sessione di apprendimento di $50mln$ di step, durata circa una settimana. Durante la settimana di apprendimento, più volte al giorno veniva campionato il modello salvato (con estensione \texttt{.t7}) e testato per vederne l'evoluzione. I campionamento erano stati eseguiti nella fase più avanzata (sopra ai $7$ milioni di step) della sessione di apprendimento e ancora, senza dare risultati soddisfacenti (un sottoinsieme dei campioni viene riportato in \ref{subfig:over7}). Infatti, a partire dalla sessione precedente di $18mln$ di step sostanzialmente nulla è cambiato nemmeno in prossimità dei $50$. È stata quindi rieseguita un'attenta analisi di ciò che accade all'inizio della fase di apprendimento, nei primi milioni di step (Figura \ref{subfig:under7}).			
+			\begin{figure*}[h]
+				\centering
+				
+				\begin{subfigure}[b]{\textwidth}
+					\centering
+					\includegraphics[scale=.75]{images/over7.png}
+					\caption{Il punteggio medio più alto è $1628,45$, rispetto alla sessione da $18mln$ di step il miglioramento è insoddisfacente.}
+					\label{subfig:under7}
+				\end{subfigure}
+				
+				\begin{subfigure}[b]{\textwidth}
+					\centering
+					\includegraphics[scale=.75]{images/under7.png}
+					\caption{Range di step dove accadono i cambiamenti più significativi, il punteggio medio massimo campionato in questa sessione raggiunge i $5337,33$ punti.}
+					\label{subfig:over7}
+				\end{subfigure}
+			
+				\caption{Punteggi dell'agente all'aumentare degli step (milioni).} 
+				\label{fig:centipede-scores}
+			\end{figure*}
+		
+			Seguono ora i principali comportamenti osservati lungo il percorso di apprendimento:			
+			\begin{itemize}
+				\item $0,25mln$, comportamento ancora troppo inadeguato, media 665 punti;
+				\item $0,5mln$, il comportamento è caratterizzato da pochi movimenti e non sa schivare i nemici, ma si assiste a un \textbf{netto miglioramento della mira} e, se si riesce a uccidere il centipede in allo schermo ottiene anche 12431 punti con una media di 4998;
+				\item $0,63mln$, sono state sviluppate \textbf{impressionanti capacità di schivare} numerosi nemici contemporaneamente, provenienti da tutte le parti, tuttavia un comportamento così dinamico e rischioso fa scendere la media a 4241 punti;
+				\item $1,15mln$, qui un'altro comportamento interessante manifestato consiste nel posizionarsi esattamente sotto a dove compare il ragno sparando continuamente, e quando il ragno compare, egli muore subito, media scesa a 3884 punti e si continuerà ad assistere a un declino;
+				\item $7,69mln$, con una media di 1455 punti, si intensificano i comportamenti \textbf{suicida} dell'agente;
+				\item $19,3mln$, si continua ad assistere a una serie di suicidi da parte dell'agente, con una media di 1118 punti, due volte minore del gioco casuale;
+				\item $40,0mln$, solo arrivati qui si nota un lieve cambiamento positivo, ricompaiono i tentativi di uccidere il ragno, ma i sucidi persistono soprattutto se il ragno compare da destra, media 1628;
+				\item fino a $50,0mln$ non compare alcun cambiamento significativo, con una media finale di 1379 punti.
+			\end{itemize}
+			
+			È stato campionato una valore massimo di $5337,33$ ($32,8\%$ delle prestazioni umane) con una deviazione standard di $1756$. Si possono anche osservare partite in cui DQN \textbf{supera lo score medio umano} con un punteggio di $12431$ punti. Tuttavia, gli altissimi valori delle deviazioni sia in \cite{bib:dqn} che qui osservati, suggeriscono che enormi punteggi in \textit{Centipede} si possono fare solo sotto particolari condizioni favorevoli.
+		
+%										1. 18mln anche per centipede, ma è stato ottenuto un balanale 600p, significa -23%
+%										3. ma questo significa che l'agente "si impegna" a fare un punteggio peggiore, perché?
+%										4. è a causa della struttura del gioco, dopo aver sparato al centipede esso si suicida per guadagnare punti
+%		2. è stato notato che dopo un 1mln ne faceva di più
+%		5. si suicida contro il ragno perché poi ottiene , ma è al contrario l'uccisione del ragno a far ingrandire enormemente i punteggi
+%		- mentre un pezzo di centipede regala 10 punti, il ragno ne regala dai 300 a 900
+%		- dqn non può estrarre informazioni del genere, un pezzo di centipede fa +1 e il ragno fà sempre +1
+%		- per come è progettato, dqn non può sapere che l'uccisione del ragno conviene rispetto alla morte in seguit alla quale ottiene parecchi punteggi
+%		
+%	Deep 30 samples
+%		250k	stupido
+%		500k	lo stile è statico, l'agente sta fermo, è poco bravo a schivare i nemici
+%				quelli che arrivano di lato non si sposta
+%				ogni tanto avanza solo per colpire il ragno e poi torna
+%		630k	capacità di schivare davvero impressionante
+%		1,15mln 3884.68mean	+-3301.09	...2713,5510,3085,12456,3508,668,2584,3917,12687,1626,1377,5507,3638,1829,2913,2726,3018,1810,2237
+%											furbizia: aspettare il ragno nel suo punto di spawn
+%		7,69mln 1455,9pmean					si intensificano comportamenti suicida
+%		9,85mln 1094.04mean +-816,70	...1281,306,3932,1439,293,478,1314,529,699,659,435,369,1435,1316,1875,1295,1754,750,1434,632,750
+%		14,6mln 1323.18mean +-707,26	...2327,566,1224,705,2292,2041,1378,498,437,1476,1611
+%		18,0mln 1173.0
+%		19,3mln 1118.30mean +-505,51	...1556,750,1003,1836,751,897,2032,586,755,1017
+%											palesemente preferisce la morte
+%		26,0mln 1179.60mean +-550,20	...304,723,1312,1390,663,1725,663,1934,1655,1427
+%											no alcun cambiamento comportamentale visibile
+%		33,9mln 1012.45mean +-350,55	...1212,817,1255,1139,690,467,1239,795,962,817,1744
+%		38,8mln 1137.81mean +-507,07	...612,1968,780,525,1312,924,736,1330,1968,1440,921
+%											si suicida ma non con così tanta ovvietà
+%		40,0mln 1628.45mean +-1108,02	...4568,1664,1677,1469,1018,694,2012,609,1912,585,1705
+%											tende di più a uccidere il ragno
+% 											si suicida principalmente se il ragno compare da destra
+% 											nuovo comportamento che diventa frequente: dopo aver ucciso gran parte di centipede e non riesce a mirare i singoli pezzettini,
+% 											non sa cosa fare, si mette a destra dello schermo e aspetta di essere investito
+%		48,0mln 1577.52mean +-697,52	...587,2148,1337,807,1068,3223,1368,898,1737,1311,1705,915,2741,1138,1726,2468,1130,1630,2036
+%		50,0mln 1379.43mean +-561,09	...909,991,1773,3285,489,1313,1309,1164,2064,1197,1639,1164,2290,898,1268,1001,854,1364,850,1620,2015,1275,1164,1393,1419,1914,1809,1391,893
+
+		
 
 \section{Evoluzione dell'ambito RL}\label{sec:evoalg}
 	La pubblicazione dell'algoritmo DQN proposto in \cite{bib:dqn} risale al $2015$, la sua implementazione molto probabilmente ancora prima (dovrebbe essere $2014$). In ambito \textit{Machine Learning} significa che in realtà è un algoritmo vecchio: da allora non solo sono state proposte modifiche del DQN ma anche alternative. La ricerca di \textit{DeepMind} stessa si è spostata su altri metodi.	Si andrà ora a vedere brevemente, senza entrare troppo nel merito, le modifiche apportate al DQN in diversi articoli.
@@ -503,9 +617,11 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 	L'algoritmo è stato utilizzato per apprendere il gioco al primo \textit{Doom}. A3C stesso ha parecchie versioni e modifiche, incluso l'utilizzo di reti deep ricorsive, e viene spesso usato per migliorare ulteriormente i risultati in vari ambienti\footnote{Open AI Gym, \emph{\href{https://gym.openai.com/envs\#atari}{Atari Environment.}}}. Ad ogni modo, mentre si possono trovare algoritmi che apportano miglioramenti all'apprendimento in giochi come \textit{Pac-Man}, rispetto al DQN, non ci risulta che esistano algoritmi in grado di stravolgere gli esiti all'interno di \textit{Montezuma's Revenge}.
 
 	\section{Conclusioni}
-		Per riuscire ad argomentare nel miglior modo possibile i risultati poco soddisfacenti di un sottoinsieme del parco titoli \textit{Atari 2600}, è stato prima studiato l'algoritmo \textit{Q\texttwelveudash Learning}, poi sono state individuate le aggiunte fatte da \textit{DeepMind} per la realizzazione dell'algoritmo \textit{Deep Q\texttwelveudash Network}. Dopo aver appurato in che modo è stata realizzata la relativa implementazione in \texttt{LUA}, è stato analizzato il contributo delle reti neurali convoluzionali. Per aggiungere valore all'esperienza, era nel nostro intento riuscire ad allenare per davvero degli agenti DQN, ma dopo alcune prove è stato scoperto che per un processo di apprendimento un minimo soddisfacente servono capacità di calcolo non indifferenti e tempo di calcolo misurabile in settimane. Alcuni risultati (seppur non soddisfacenti) sono comunque stati riportati.
+		Per riuscire ad argomentare nel miglior modo possibile i risultati poco soddisfacenti di un sottoinsieme del parco titoli \textit{Atari 2600}, è stato prima studiato l'algoritmo \textit{Q\texttwelveudash Learning}, poi sono state individuate le aggiunte fatte da \textit{DeepMind} per la realizzazione dell'algoritmo \textit{Deep Q\texttwelveudash Network}. Dopo aver appurato in che modo è stata realizzata la relativa implementazione in \texttt{LUA}, è stato analizzato il contributo delle reti neurali convoluzionali. 
 		
-		In seguito a un'attenta analisi di \textit{gameplay} e regole che stanno alla base di diversi giochi \textit{Atari 2600}, e degli studi precedentemente fatti, sono stati forniti degli argomenti che classificano i giochi nei tre seguenti gruppi di difficoltà: giochi con pianificazione a lungo termine, giochi con parecchie scelte a livello tattico e giochi che semplicemente riteniamo più difficili degli altri.
+		In seguito a un'attenta analisi di \textit{gameplay} e regole che stanno alla base di diversi giochi \textit{Atari 2600}, e degli studi precedentemente fatti, sono stati forniti degli argomenti che classificano i giochi nei tre seguenti gruppi di difficoltà: giochi con pianificazione a lungo termine, giochi con parecchie scelte a livello tattico e giochi che semplicemente riteniamo più difficili degli altri, o con ambienti ingannevoli nei confronti della struttura del DQN. Normalizzando i risultati, la bravura raggiunta in \textit{Breakout} è del $1127\%$ rispetto alle prestazioni umane, mentre in \textit{Centipede} viene raggiunto un $32,8\%$.
+		
+		Sono poi state eseguite delle sessioni di apprendimento per allenare agenti in grado di giocare a \textit{Breakout}. Per eseguire dei confronti con \textit{Breakout}, e anche per verificare alcune ipotesi sorte inizialmente per quanto riguarda gli insuccessi del DQN in alcuni giochi, sono state eseguite molteplici sessioni di apprendimento per \textit{Centipede}.
 		
 		Infine, dato il tipico rapido invecchiamento di alcune pubblicazioni in ambito \textit{Machine Learning}, è stato dato uno sguardo all'evoluzione dell'argomento trattato.
 	

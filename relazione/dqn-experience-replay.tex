@@ -399,7 +399,7 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 			\caption{L'eroe deve arrivare alla chiave eseguendo molteplici azioni ed evitando il teschio.}
 			\label{fig:montezuma}
 		\end{figure}
-		Inoltre, per giocare è necessario muoversi contemporanemante su più livelli, logicamente collegati. Non vediamo alcun meccanismo in grado di gestire scelte del genere. Almeno per quanto riguarda la singola chiave, si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
+		Inoltre, per giocare è necessario muoversi contemporaneamente su più livelli, logicamente collegati. Non vediamo alcun meccanismo in grado di gestire scelte del genere. Almeno per quanto riguarda la singola chiave, si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
 		
 		% Almeno per quanto riguarda la singola chiave, si potrebbe ragionare sui valori di $\gamma$; si potrebbe rivedere la velocità di raffreddamento di $\epsilon$ per incentivare ulteriormente l'esplorazione; e si potrebbe ragionare su ricompense intermedie. Ma ricordiamo l'obiettivo è quello di ottenere un algoritmo in grado di apprendere \textit{end-to-end}, di carattere generale, senza il bisogno di modifiche per task specifiche.
 		
@@ -433,12 +433,12 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 			\caption{Dopo un certo numero di ore di apprendimento l'algoritmo DQN è in grado di individuare situazioni in cui una sola azione porta numerose ricompense.}
 			\label{fig:breakout}
 		\end{figure*} 
-		In un primo momento potrebbe sembrare che questo sia in contrasto con le conclusioni fatte per quato riguarda \textit{Ms. Pac-Man}. Tuttavia, pensiamo che in \textit{Breakout} la valutazione dell'ottimalità della sequenza di azioni non cambi molto a causa di eventi imprevisti. È questione di ambiente: in \textit{Breakout} non ci sono insidie improvvise (o di qualsiasi altro tipo). A parte questo, il gioco di \textit{Breakout} (così come \textit{Pong}) premiano le \textit{skill} di reattività che vengono perfettamente ricompensate in maniera istantanea. \textit{Pac-Man} (così come \textit{Alien}) non è solo questo.
+		In un primo momento potrebbe sembrare che questo sia in contrasto con le conclusioni fatte per quanto riguarda \textit{Ms. Pac-Man}. Tuttavia, pensiamo che in \textit{Breakout} la valutazione dell'ottimalità della sequenza di azioni non cambi molto a causa di eventi imprevisti. È questione di ambiente: in \textit{Breakout} non ci sono insidie improvvise (o di qualsiasi altro tipo). A parte questo, il gioco di \textit{Breakout} (così come \textit{Pong}) premiano le \textit{skill} di reattività che vengono perfettamente ricompensate in maniera istantanea. \textit{Pac-Man} (così come \textit{Alien}) non è solo questo.
 	
 	\subsection{Ricompense Ambigue ed elevata Complessità}\label{subsec:suicide}
-		Un'altro motivo che ci è parso plausibile per la mancanza di prestazioni ottime in alcuni giochi, è perché non sono "semplici" quanto \textit{Breakout} e simili sparatutto (\textit{Space Invader, Deamon Attack}), dove bisogna andare a destra e a sinistra nel momento giusto; si intendono anche i giochi come \textit{Robotank} che sembrano diversi e addirittura in 3D, dove in realtà si tratta sempre di mirare verso destra o sinistra e sparare al momento giusto.
+		Un altro motivo che ci è parso plausibile per la mancanza di prestazioni ottime in alcuni giochi, è perché non sono "semplici" quanto \textit{Breakout} e simili sparatutto (\textit{Space Invader, Deamon Attack}), dove bisogna andare a destra e a sinistra nel momento giusto; si intendono anche i giochi come \textit{Robotank} che sembrano diversi e addirittura in 3D, dove in realtà si tratta sempre di mirare verso destra o sinistra e sparare al momento giusto.
 		
-		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta a un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura \ref{fig:centipede}), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.		
+		Per dirla in altre parole, ci sono giochi come \textit{Centipede} che aggiungono un grado di difficoltà in più: i nemici sono numerosi e con comportamenti diversi, non si muovono solo in orizzontale ma anche in verticale circondando il giocatore da tutte le direzioni possibili. Come già detto, ci sono tipi di nemici con comportamenti diversi la cui uccisione comporta ad un punteggio diverso: sarebbe saggio uccidere il più in fretta possibile le parti del centipede che altrimenti verrebbero a minacciare il giocatore ai lati o dietro le spalle. Tuttavia, ricordiamo che l'algoritmo DQN mappa tutte le ricompense positive al valore $1$. Nelle situazioni più calde alle quali l'algoritmo viene sottoposto (visibile nella Figura \ref{fig:centipede}), esso fa fatica a muoversi in tutte le quattro direzioni continuando a sparare.		
 		\begin{figure}[t]
 			\centering
 			\includegraphics[scale=.5]{images/centipede1.png}
@@ -449,7 +449,7 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 		% Esistono in rete discussioni di appassionati del settore che dopo settimane di allenamento non riuscivano a ottenere un agente DQN in \textit{Centipede} che cercasse di muoversi efficientemente sull'asse verticale per evitare il contatto con i nemici.
 		
 \section{Sessioni di apprendimento}
-	In questa sezione verranno riportate le esperienze ottenute in seguito a una serie di prove di apprendimento in due giochi: \textit{Breakout} e \textit{Centipede}. Inizialmente si era pensato di fare circa $50$ ore di apprendimento per ognuno dei due giochi, questo significa circa $18$ milioni di step al posto dei $50$ milioni al contrario eseguiti eseguiti da \textit{DeepMind}. Per valutare le prestazioni degli agenti verrà usata la stessa formula \ref{eq:eval} presente in \cite{bib:dqn}.
+	In questa sezione verranno riportate le esperienze ottenute in seguito a una serie di prove di apprendimento in due giochi: \textit{Breakout} e \textit{Centipede}. Inizialmente si era pensato di fare circa $50$ ore di apprendimento per ognuno dei due giochi, questo significa circa $18$ milioni di step al posto dei $50$ milioni al contrario eseguiti da \textit{DeepMind}. Per valutare le prestazioni degli agenti verrà usata la stessa formula \ref{eq:eval} presente in \cite{bib:dqn}.
 	\begin{equation}\label{eq:eval}
 		100(dqn - r)/(human - r)
 	\end{equation}
@@ -552,16 +552,16 @@ L'ultima parte della CNN (figura \ref{fig:layerFC}) vengono implementati gli str
 			Seguono ora i principali comportamenti osservati lungo il percorso di apprendimento:			
 			\begin{itemize}
 				\item $0,25mln$, comportamento ancora troppo inadeguato, media 665 punti;
-				\item $0,5mln$, il comportamento è caratterizzato da pochi movimenti e non sa schivare i nemici, ma si assiste a un \textbf{netto miglioramento della mira} e, se si riesce a uccidere il centipede in allo schermo ottiene anche 12431 punti con una media di 4998;
+				\item $0,5mln$, il comportamento è caratterizzato da pochi movimenti e non sa schivare i nemici, ma si assiste ad un \textbf{netto miglioramento della mira} e, se si riesce a uccidere il centipede in alto dello schermo ottiene anche 12431 punti con una media di 4998;
 				\item $0,63mln$, sono state sviluppate \textbf{impressionanti capacità di schivare} numerosi nemici contemporaneamente, provenienti da tutte le parti, tuttavia un comportamento così dinamico e rischioso fa scendere la media a 4241 punti;
-				\item $1,15mln$, qui un'altro comportamento interessante manifestato consiste nel posizionarsi esattamente sotto a dove compare il ragno sparando continuamente, e quando il ragno compare, egli muore subito, media scesa a 3884 punti e si continuerà ad assistere a un declino;
+				\item $1,15mln$, qui un altro comportamento interessante manifestato consiste nel posizionarsi esattamente sotto a dove compare il ragno sparando continuamente, e quando il ragno compare, egli muore subito, media scesa a 3884 punti e si continuerà ad assistere a un declino;
 				\item $7,69mln$, con una media di 1455 punti, si intensificano i comportamenti \textbf{suicida} dell'agente;
 				\item $19,3mln$, si continua ad assistere a una serie di suicidi da parte dell'agente, con una media di 1118 punti, due volte minore del gioco casuale;
-				\item $40,0mln$, solo arrivati qui si nota un lieve cambiamento positivo, ricompaiono i tentativi di uccidere il ragno, ma i sucidi persistono soprattutto se il ragno compare da destra, media 1628;
+				\item $40,0mln$, solo arrivati qui si nota un lieve cambiamento positivo, ricompaiono i tentativi di uccidere il ragno, ma i suicidi persistono soprattutto se il ragno compare da destra, media 1628;
 				\item fino a $50,0mln$ non compare alcun cambiamento significativo, con una media finale di 1379 punti.
 			\end{itemize}
 			
-			È stato campionato una valore massimo di $5337,33$ ($32,8\%$ delle prestazioni umane) con una deviazione standard di $1756$. Si possono anche osservare partite in cui DQN \textbf{supera lo score medio umano} con un punteggio di $12431$ punti. Tuttavia, gli altissimi valori delle deviazioni sia in \cite{bib:dqn} che qui osservati, suggeriscono che enormi punteggi in \textit{Centipede} si possono fare solo sotto particolari condizioni favorevoli.
+			È stato campionato un valore massimo di $5337,33$ ($32,8\%$ delle prestazioni umane) con una deviazione standard di $1756$. Si possono anche osservare partite in cui DQN \textbf{supera lo score medio umano} con un punteggio di $12431$ punti. Tuttavia, gli altissimi valori delle deviazioni sia in \cite{bib:dqn} che qui osservati, suggeriscono che enormi punteggi in \textit{Centipede} si possono fare solo sotto particolari condizioni favorevoli.
 		
 %										1. 18mln anche per centipede, ma è stato ottenuto un balanale 600p, significa -23%
 %										3. ma questo significa che l'agente "si impegna" a fare un punteggio peggiore, perché?
